@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-11T14:59:36Z",
+  "generated": "2026-07-11T20:39:08Z",
   "views": [
     {
       "key": "streams",
@@ -370,6 +370,21 @@
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
       "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "Test Camera (Tower Grove Park)",
+      "view": "map",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442",
+      "page_url": "https://www.slu.edu/webcam/doisy-research-center-view.php",
+      "status": "live",
+      "notes": "DUMMY placeholder to validate map + FOV cone; delete when real cameras are geolocated",
+      "geo": {
+        "lat": 38.6047,
+        "lon": -90.2497,
+        "azimuth": 34.0,
+        "fov": 70.0
+      }
     }
   ]
 }

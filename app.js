@@ -1,19 +1,37 @@
 /* STL Webcams — static dashboard.
-   Reads data/cameras.json and renders one view at a time. Only the active
-   view is mounted, so we never spin up every iframe/stream at once. */
+   Reads data/cameras.json and renders one view at a time (Streams / Stills /
+   Map). Only the active view is mounted, so we never spin up every
+   iframe/stream at once. Cameras with a `geo` block appear on the Map view as
+   a pin plus an FOV wedge; clicking a pin opens the stream in a lightbox. */
 
 'use strict';
 
 const IMG_REFRESH_MS = 20000; // still-image cadence while visible
+const FOV_RADIUS_M = 300;     // illustrative length of the FOV wedge on the map
+const MAP_KEY = 'map';
+
 const state = {
   data: null,
   activeView: null,
-  imgTimers: [],
-  hlsInstances: [],
-  observer: null,
+  gridSink: null,   // media resources for the active grid view
+  modalSink: null,  // media resources for the open lightbox
+  map: null,        // Leaflet instance for the Map view
 };
 
 const $ = (sel) => document.querySelector(sel);
+
+/* ---------- media resource sinks ---------- */
+
+const newSink = () => ({ timers: [], hls: [], observer: null });
+
+function destroySink(sink) {
+  if (!sink) return;
+  sink.timers.forEach(clearInterval);
+  sink.hls.forEach((h) => h.destroy());
+  if (sink.observer) sink.observer.disconnect();
+}
+
+/* ---------- boot ---------- */
 
 async function boot() {
   try {
@@ -27,29 +45,39 @@ async function boot() {
   }
 
   buildTabs();
-  const first = state.data.views[0];
-  selectView(first.key);
+  selectView(state.data.views[0].key);
   updateMeta();
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
 }
+
+const geoCameras = () => state.data.cameras.filter((c) => c.geo);
+const countForView = (key) =>
+  state.data.cameras.filter((c) => c.view === key).length;
 
 function buildTabs() {
   const tabs = $('#tabs');
   tabs.innerHTML = '';
-  for (const v of state.data.views) {
+  const entries = state.data.views.map((v) => ({
+    key: v.key,
+    label: `${v.title} (${countForView(v.key)})`,
+  }));
+  if (geoCameras().length) {
+    entries.push({ key: MAP_KEY, label: `Map (${geoCameras().length})` });
+  }
+  for (const e of entries) {
     const btn = document.createElement('button');
     btn.className = 'tab';
     btn.type = 'button';
     btn.role = 'tab';
-    btn.textContent = `${v.title} (${countForView(v.key)})`;
-    btn.dataset.view = v.key;
+    btn.textContent = e.label;
+    btn.dataset.view = e.key;
     btn.setAttribute('aria-selected', 'false');
-    btn.addEventListener('click', () => selectView(v.key));
+    btn.addEventListener('click', () => selectView(e.key));
     tabs.appendChild(btn);
   }
 }
-
-const countForView = (key) =>
-  state.data.cameras.filter((c) => c.view === key).length;
 
 function selectView(key) {
   if (state.activeView === key) return;
@@ -57,40 +85,39 @@ function selectView(key) {
   for (const btn of document.querySelectorAll('.tab')) {
     btn.setAttribute('aria-selected', String(btn.dataset.view === key));
   }
-  renderView(key);
+  teardownView();
+  if (key === MAP_KEY) renderMap();
+  else renderGrid(key);
 }
 
-function teardown() {
-  state.imgTimers.forEach(clearInterval);
-  state.imgTimers = [];
-  state.hlsInstances.forEach((h) => h.destroy());
-  state.hlsInstances = [];
-  if (state.observer) state.observer.disconnect();
-  state.observer = new IntersectionObserver(onIntersect, { rootMargin: '200px' });
-}
-
-function renderView(key) {
-  teardown();
+function teardownView() {
+  destroySink(state.gridSink);
+  state.gridSink = null;
+  if (state.map) { state.map.remove(); state.map = null; }
   const grid = $('#grid');
+  grid.classList.remove('map-mode');
   grid.innerHTML = '';
+  $('#empty').hidden = true;
+}
+
+/* ---------- grid views (Streams / Stills) ---------- */
+
+function renderGrid(key) {
+  const grid = $('#grid');
+  const sink = newSink();
+  state.gridSink = sink;
   const cams = state.data.cameras.filter((c) => c.view === key);
   $('#empty').hidden = cams.length > 0;
-  for (const cam of cams) grid.appendChild(buildCard(cam));
+  for (const cam of cams) grid.appendChild(buildCard(cam, sink, { lazyHls: true }));
 }
 
-function buildCard(cam) {
+function buildCard(cam, sink, opts = {}) {
   const card = document.createElement('article');
   card.className = `card ${cam.render}`;
-
   const media = document.createElement('div');
   media.className = 'card-media';
   card.appendChild(media);
-
-  if (cam.render === 'image') buildImage(media, cam);
-  else if (cam.render === 'iframe') buildIframe(media, cam);
-  else if (cam.render === 'hls') buildHls(media, cam);
-  else if (cam.render === 'link') buildLink(media, cam);
-
+  mountMedia(media, cam, sink, opts);
   card.appendChild(buildBody(cam));
   return card;
 }
@@ -98,7 +125,6 @@ function buildCard(cam) {
 function buildBody(cam) {
   const body = document.createElement('div');
   body.className = 'card-body';
-
   const title = document.createElement('div');
   title.className = 'card-title';
   title.title = cam.name;
@@ -113,7 +139,6 @@ function buildBody(cam) {
     title.textContent = cam.name;
   }
   body.appendChild(title);
-
   if (cam.status && cam.status !== 'live') {
     const badge = document.createElement('span');
     badge.className = `badge ${cam.status}`;
@@ -123,9 +148,16 @@ function buildBody(cam) {
   return body;
 }
 
-/* ---- render types ---- */
+/* ---------- media mounting (shared by grid + lightbox) ---------- */
 
-function buildImage(media, cam) {
+function mountMedia(media, cam, sink, opts = {}) {
+  if (cam.render === 'image') mountImage(media, cam, sink);
+  else if (cam.render === 'iframe') mountIframe(media, cam);
+  else if (cam.render === 'hls') mountHls(media, cam, sink, opts);
+  else if (cam.render === 'link') mountLink(media, cam);
+}
+
+function mountImage(media, cam, sink) {
   const img = document.createElement('img');
   img.alt = cam.name;
   img.loading = 'lazy';
@@ -140,10 +172,10 @@ function buildImage(media, cam) {
   const timer = setInterval(() => {
     if (document.visibilityState === 'visible') load();
   }, IMG_REFRESH_MS);
-  state.imgTimers.push(timer);
+  sink.timers.push(timer);
 }
 
-function buildIframe(media, cam) {
+function mountIframe(media, cam) {
   const frame = document.createElement('iframe');
   frame.src = cam.url;
   frame.loading = 'lazy';
@@ -153,7 +185,7 @@ function buildIframe(media, cam) {
   media.appendChild(frame);
 }
 
-function buildHls(media, cam) {
+function mountHls(media, cam, sink, opts = {}) {
   const video = document.createElement('video');
   video.muted = true;
   video.playsInline = true;
@@ -161,6 +193,11 @@ function buildHls(media, cam) {
   video.preload = 'none';
   media.appendChild(video);
 
+  const start = () => attachHls(video, cam.url, sink);
+
+  if (!opts.lazyHls) { start(); return; }
+
+  // Grid: show a play badge and auto-start (muted) when scrolled into view.
   const overlay = document.createElement('button');
   overlay.className = 'play-overlay';
   overlay.type = 'button';
@@ -170,39 +207,45 @@ function buildHls(media, cam) {
   media.appendChild(overlay);
 
   let started = false;
-  const start = () => {
-    if (started) return;
-    started = true;
-    overlay.remove();
-    attachHls(video, cam.url);
-    video.play().catch(() => {});
-  };
-  overlay.addEventListener('click', start);
-  // Auto-start (muted) when scrolled into view.
-  media.dataset.autostart = '1';
-  media._start = start;
-  state.observer.observe(media);
+  const go = () => { if (started) return; started = true; overlay.remove(); start(); };
+  overlay.addEventListener('click', go);
+  if (!sink.observer) sink.observer = new IntersectionObserver(onIntersect, { rootMargin: '200px' });
+  media._start = go;
+  sink.observer.observe(media);
 }
 
-function attachHls(video, url) {
-  if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = url; // Safari / native HLS
-    return;
+function onIntersect(entries) {
+  for (const e of entries) {
+    if (e.isIntersecting && e.target._start) {
+      e.target._start();
+      state.gridSink.observer.unobserve(e.target);
+    }
   }
+}
+
+function attachHls(video, url, sink) {
+  // Prefer hls.js where supported (Chromium et al.). Some Chromium builds
+  // report canPlayType('...mpegurl')="maybe" but can't actually decode HLS, so
+  // native playback is only a fallback for engines without hls.js (Safari).
   if (window.Hls && window.Hls.isSupported()) {
-    const hls = new window.Hls({ lowLatencyMode: true });
+    const hls = new window.Hls();
     hls.loadSource(url);
     hls.attachMedia(video);
+    hls.on(window.Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
     hls.on(window.Hls.Events.ERROR, (_e, data) => {
-      if (data.fatal) console.warn('HLS fatal', url, data.type);
+      if (!data.fatal) return;
+      if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+      else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+      else console.warn('HLS fatal', url, data.type);
     });
-    state.hlsInstances.push(hls);
+    sink.hls.push(hls);
   } else {
-    video.src = url;
+    video.src = url; // Safari / native HLS
+    video.play().catch(() => {});
   }
 }
 
-function buildLink(media, cam) {
+function mountLink(media, cam) {
   const a = document.createElement('a');
   a.className = 'link-cta';
   a.href = cam.page_url || cam.url;
@@ -213,20 +256,134 @@ function buildLink(media, cam) {
   media.appendChild(a);
 }
 
-function onIntersect(entries) {
-  for (const e of entries) {
-    if (e.isIntersecting && e.target._start) {
-      e.target._start();
-      state.observer.unobserve(e.target);
+/* ---------- Map view ---------- */
+
+function renderMap() {
+  const grid = $('#grid');
+  grid.classList.add('map-mode');
+  const el = document.createElement('div');
+  el.id = 'map';
+  grid.appendChild(el);
+
+  const map = L.map(el, { scrollWheelZoom: true });
+  state.map = map;
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors',
+  }).addTo(map);
+
+  const bounds = L.latLngBounds([]);
+  for (const cam of geoCameras()) {
+    const { lat, lon, azimuth, fov } = cam.geo;
+    bounds.extend([lat, lon]);
+
+    if (azimuth != null && fov != null) {
+      const pts = fovPolygon(cam.geo, FOV_RADIUS_M);
+      L.polygon(pts, {
+        color: '#2f6fed', weight: 1, fillColor: '#2f6fed', fillOpacity: 0.22,
+      }).addTo(map);
+      pts.forEach((p) => bounds.extend(p));
     }
+
+    const marker = L.marker([lat, lon], { icon: camIcon(), title: cam.name }).addTo(map);
+    marker.bindTooltip(fovLabel(cam), { direction: 'top', offset: [0, -10] });
+    marker.on('click', () => openModal(cam));
   }
+
+  if (bounds.isValid()) map.fitBounds(bounds.pad(0.25), { maxZoom: 16 });
+  else map.setView([38.627, -90.199], 11); // downtown STL fallback
+  // Leaflet needs a size recalc after the container becomes visible.
+  setTimeout(() => map.invalidateSize(), 0);
 }
+
+const camIcon = () =>
+  L.divIcon({ className: 'cam-pin', iconSize: [18, 18], iconAnchor: [9, 9] });
+
+function fovLabel(cam) {
+  const { azimuth, fov } = cam.geo;
+  if (azimuth == null || fov == null) return cam.name;
+  const half = fov / 2;
+  const lo = ((azimuth - half) % 360 + 360) % 360;
+  const hi = ((azimuth + half) % 360 + 360) % 360;
+  return `${cam.name} — ${azimuth}° (${lo.toFixed(0)}°–${hi.toFixed(0)}°), ${fov}° FOV`;
+}
+
+/* Geodesic destination point (haversine forward), bearing in compass degrees. */
+function destPoint(lat, lon, bearingDeg, distM) {
+  const R = 6371000, d = distM / R, br = bearingDeg * Math.PI / 180;
+  const la1 = lat * Math.PI / 180, lo1 = lon * Math.PI / 180;
+  const la2 = Math.asin(
+    Math.sin(la1) * Math.cos(d) + Math.cos(la1) * Math.sin(d) * Math.cos(br));
+  const lo2 = lo1 + Math.atan2(
+    Math.sin(br) * Math.sin(d) * Math.cos(la1),
+    Math.cos(d) - Math.sin(la1) * Math.sin(la2));
+  return [la2 * 180 / Math.PI, lo2 * 180 / Math.PI];
+}
+
+function fovPolygon(geo, radius) {
+  const { lat, lon, azimuth, fov } = geo;
+  const half = fov / 2;
+  const steps = Math.max(8, Math.round(fov / 5));
+  const pts = [[lat, lon]];
+  for (let i = 0; i <= steps; i++) {
+    pts.push(destPoint(lat, lon, azimuth - half + (fov * i) / steps, radius));
+  }
+  pts.push([lat, lon]);
+  return pts;
+}
+
+/* ---------- lightbox ---------- */
+
+function openModal(cam) {
+  closeModal();
+  const sink = newSink();
+  state.modalSink = sink;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'modal';
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+  const dialog = document.createElement('div');
+  dialog.className = 'modal-dialog';
+
+  const media = document.createElement('div');
+  media.className = 'card-media';
+  mountMedia(media, cam, sink, { lazyHls: false });
+
+  const bar = document.createElement('div');
+  bar.className = 'modal-bar';
+  const title = document.createElement('span');
+  title.className = 'modal-title';
+  title.textContent = cam.name;
+  const close = document.createElement('button');
+  close.className = 'modal-close';
+  close.type = 'button';
+  close.setAttribute('aria-label', 'Close');
+  close.textContent = '✕';
+  close.addEventListener('click', closeModal);
+  bar.append(title, close);
+
+  dialog.append(bar, media);
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+}
+
+function closeModal() {
+  const overlay = $('#modal');
+  if (!overlay) return;
+  destroySink(state.modalSink);
+  state.modalSink = null;
+  overlay.remove();
+}
+
+/* ---------- misc ---------- */
 
 function updateMeta() {
   const g = state.data.generated;
-  if (!g) return;
-  const d = new Date(g);
-  $('#meta').textContent = `data updated ${d.toLocaleDateString()}`;
+  if (g) {
+    $('#meta').textContent = `data updated ${new Date(g).toLocaleDateString()}`;
+  }
   $('#footer-count').textContent = `${state.data.cameras.length} cameras`;
 }
 

@@ -29,9 +29,32 @@ Each camera has a `render` type (derived from the CSV) that picks the tile:
 | `iframe` | embeddable player               | lazy `<iframe>`                                 |
 | `link`   | frame-busting / click-to-play   | link-out button                                 |
 
-Only the active view (Streams / Stills) is mounted at a time, so the browser
-never spins up every embed at once. `hls.js` is vendored in `vendor/` — no CDN
-dependency.
+Only the active view (Streams / Stills / Map) is mounted at a time, so the
+browser never spins up every embed at once. `hls.js` and Leaflet are vendored
+in `vendor/` — no CDN dependency (map tiles come from OpenStreetMap at runtime).
+
+## Map view
+
+Cameras that have a location show up on a **Map** tab as a pin plus a shaded
+field-of-view wedge; clicking a pin opens that camera's stream in a lightbox.
+
+Locations live in `data/locations.csv`, joined onto cameras **by name** so the
+map is decoupled from the HA-derived `cameras.csv`:
+
+```
+name,lat,lon,azimuth,fov,render,url,page_url,notes
+```
+
+- `azimuth` is a compass bearing (0°=N, 90°=E, clockwise); `fov` is the total
+  cone width, so the wedge spans `azimuth ± fov/2`.
+- A row whose `name` **matches a camera** just adds `lat,lon[,azimuth,fov]` and
+  the camera appears on the map. `render/url/page_url` can be left blank.
+- A row whose `name` **matches nothing** but has `render`+`url` becomes a
+  standalone map-only marker (handy for a test pin). It won't show in
+  Streams/Stills.
+- Omit `azimuth`/`fov` to drop a plain pin with no wedge.
+
+Re-run `python3 data/convert.py` after editing either CSV.
 
 ## Editing the camera list
 

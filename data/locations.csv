@@ -1,0 +1,2 @@
+name,lat,lon,azimuth,fov,render,url,page_url,notes
+Test Camera (Tower Grove Park),38.6047,-90.2497,34,70,iframe,https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442,https://www.slu.edu/webcam/doisy-research-center-view.php,DUMMY placeholder to validate map + FOV cone; delete when real cameras are geolocated
