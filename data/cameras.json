@@ -1,0 +1,375 @@
+{
+  "generated": "2026-07-11T14:59:36Z",
+  "views": [
+    {
+      "key": "streams",
+      "title": "Streams"
+    },
+    {
+      "key": "stills",
+      "title": "Stills"
+    }
+  ],
+  "cameras": [
+    {
+      "name": "SLU South Campus (Doisy)",
+      "view": "streams",
+      "render": "hls",
+      "url": "https://cs5.pixelcaster.com/live/slu-caroline.stream/playlist.m3u8",
+      "page_url": "https://www.slu.edu/webcam/doisy-research-center-view.php",
+      "status": "live",
+      "notes": "Pixelcaster HLS; unauthenticated; verified. Sibling SLU cams exist (Clock Tower/Quad/BSC/Sports Complex)"
+    },
+    {
+      "name": "MO DNR Pollution Cam (St. Marys)",
+      "view": "stills",
+      "render": "image",
+      "url": "https://dnr.mo.gov/sites/dnr/files/styles/large/public/media/framegrabs/cf006e2d-134f-4519-a2bc-f1fc49f59df9/0/framegrab.jpg",
+      "page_url": "https://dnr.mo.gov/air/hows-air/current-quality/st-louis-camera",
+      "status": "live",
+      "notes": "JPEG updated every minute; atop SSM St. Marys 6420 Clayton Rd. Bookmark URL 301s to /current-quality/"
+    },
+    {
+      "name": "Airport Cam (163-05-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=a566f17e5b69e098457b8590d26e1087",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=a566f17e5b69e098457b8590d26e1087",
+      "status": "live",
+      "notes": "Signed HLS (30-min wmsAuthSign); iframe frame.php directly"
+    },
+    {
+      "name": "100 Above the Park (163-03-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=03224dc411fe7e5ffd2d81eb5fe689dd",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=03224dc411fe7e5ffd2d81eb5fe689dd",
+      "status": "live",
+      "notes": "KSDK Forest Park cam embeds this same uid"
+    },
+    {
+      "name": "Belleville Square (163-09-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8135044461c6e7f62579fbf28ee5f3ce",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8135044461c6e7f62579fbf28ee5f3ce",
+      "status": "live",
+      "notes": ""
+    },
+    {
+      "name": "Chesterfield (163-01-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=2dc3c001ceec9118998247266e6af1f3",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=2dc3c001ceec9118998247266e6af1f3",
+      "status": "live",
+      "notes": ""
+    },
+    {
+      "name": "Edwardsville IL (163-07-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=edf873d727f0630023fb76f435cf763c",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=edf873d727f0630023fb76f435cf763c",
+      "status": "live",
+      "notes": ""
+    },
+    {
+      "name": "Arnold MO (163-08-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=bc34ef3137c34fe22a66fb2cb83a6688",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=bc34ef3137c34fe22a66fb2cb83a6688",
+      "status": "live",
+      "notes": ""
+    },
+    {
+      "name": "O'Fallon (163-06-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=97a6631c2321bfd296cbf3febeea8321",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=97a6631c2321bfd296cbf3febeea8321",
+      "status": "live",
+      "notes": ""
+    },
+    {
+      "name": "MoBot Garden (163-02-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442",
+      "status": "live",
+      "notes": ""
+    },
+    {
+      "name": "Old Town Florissant (163-10-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8cc1236564fc71dd121f03d1a3178a7b",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8cc1236564fc71dd121f03d1a3178a7b",
+      "status": "live",
+      "notes": ""
+    },
+    {
+      "name": "St. Charles (163-04-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=427e8434470c40b803903f7db97b04e9",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=427e8434470c40b803903f7db97b04e9",
+      "status": "live",
+      "notes": ". Dropped from KSDK index page as of 2026-07 but frame still live"
+    },
+    {
+      "name": "St. Charles Main Street (163-11-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=a4ceba0667cc516e264eece0caa0b508",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=a4ceba0667cc516e264eece0caa0b508",
+      "status": "live",
+      "notes": ""
+    },
+    {
+      "name": "Arch Park East View",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://iframe.dacast.com/live/b44603d7-b221-fc91-5fa2-f9d35bf908f2/e263ea86-84e6-66eb-1b29-646a22389f14",
+      "page_url": "https://www.archpark.org/visit/webcams",
+      "status": "live",
+      "notes": "Dacast iframe extracted from archpark.org"
+    },
+    {
+      "name": "Arch Park West View",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://iframe.dacast.com/live/b44603d7-b221-fc91-5fa2-f9d35bf908f2/2c46c826-e173-5e74-db7f-ee319f0fb8a6",
+      "page_url": "https://www.archpark.org/visit/webcams",
+      "status": "live",
+      "notes": "Dacast iframe extracted from archpark.org"
+    },
+    {
+      "name": "Forest Park Boathouse (Nest)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://video.nest.com/embedded/live/fLFAmuujwh?autoplay=1",
+      "page_url": "https://video.nest.com/live/fLFAmuujwh",
+      "status": "offline",
+      "notes": "Token valid & public; is_online=false 2026-07-07; may return"
+    },
+    {
+      "name": "Cuba Airport (Nest)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://video.nest.com/embedded/live/oNoqSA2M3e?autoplay=1",
+      "page_url": "https://video.nest.com/live/oNoqSA2M3e",
+      "status": "offline",
+      "notes": "Token valid & public; is_online=false 2026-07-07; ~80mi SW; user keeps"
+    },
+    {
+      "name": "Innsbrook Aspen Lake (Nest)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://video.nest.com/embedded/live/AURPpwyunS?autoplay=1",
+      "page_url": "https://video.nest.com/live/AURPpwyunS",
+      "status": "offline",
+      "notes": "Token valid & public; is_online=false 2026-07-07"
+    },
+    {
+      "name": "EarthCam Arch Riverview",
+      "view": "streams",
+      "render": "link",
+      "url": "https://www.earthcam.com/usa/missouri/stlouis/?cam=arch_riverview",
+      "page_url": "https://www.earthcam.com/usa/missouri/stlouis/?cam=arch_riverview",
+      "status": "live",
+      "notes": "Signed expiring HLS + frame-busting; link-out per user"
+    },
+    {
+      "name": "KMOV Live Stream",
+      "view": "streams",
+      "render": "link",
+      "url": "https://www.kmov.com/live_stream/",
+      "page_url": "https://www.kmov.com/live_stream/",
+      "status": "live",
+      "notes": "Newscast player; needs click; frame restrictions; link-out"
+    },
+    {
+      "name": "Bommarito SkyFOX Helicopter",
+      "view": "streams",
+      "render": "link",
+      "url": "https://fox2now.com/traffic/bommarito-skyfox-helicopter/",
+      "page_url": "https://fox2now.com/traffic/bommarito-skyfox-helicopter/",
+      "status": "event_only",
+      "notes": "Streams only when helicopter airborne; link-out"
+    },
+    {
+      "name": "Kirkwood Farmer's Market (163-12-01)",
+      "view": "streams",
+      "render": "iframe",
+      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=135e4f36feff282afcc00a1abdd58fb7",
+      "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=135e4f36feff282afcc00a1abdd58fb7",
+      "status": "live",
+      "notes": "Found on ksdk.com/weather-cameras 2026-07; signed HLS"
+    },
+    {
+      "name": "KMOV Barnes-Jewish Hospital",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/Barnes%20East.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV 360 Hilton Ballpark East",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/360hilton.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Westport",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/westport.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV St. Louis Children's Hospital",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/cwe_childrens.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Alton Memorial Hospital",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/Alton%20Memorial_Full.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Lambert Airport",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/airport.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Shiloh Memorial",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/Shiloh_Memorial_Shiloh.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV 360 Hilton Ballpark West",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/360whilton.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Barnes-Jewish Siteman South County",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/South%20County.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Missouri Baptist Sullivan",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/Sullivan.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Barnes-Jewish St. Peters",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/St_Peters.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Missouri Baptist Medical Center",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/Mo%20Bapt.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Eureka",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/eureka.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Christian Hospital Spanish Lake",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/North%20County_Spanish%20Lake.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Progress West Hospital OFallon",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/Ofallon_Progress_West.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV One Cardinal Way",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/WEB%20CTR%20One%20Cardinal%20Way.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV Parkland Health Farmington",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/Farmington_Parkland%20Health.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    },
+    {
+      "name": "KMOV SIU Edwardsville Campus",
+      "view": "stills",
+      "render": "image",
+      "url": "https://webpubcontent.gray.tv/kmov/weather/SIU%20Edwardsville.jpg",
+      "page_url": "https://www.firstalert4.com/weather/cams/",
+      "status": "live",
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+    }
+  ]
+}
