@@ -15,12 +15,15 @@ render column -> output render + primary url:
     skip                        -> excluded entirely
 
 Geo / map (data/locations.csv, optional):
-    columns: name,lat,lon,azimuth,fov,render,url,page_url,notes
-    A row whose `name` matches a camera attaches a `geo` block
-    ({lat, lon[, azimuth, fov]}) to it, so it appears on the Map view.
-    A row whose `name` matches nothing but has render+url becomes a
-    standalone map-only marker (view "map"). azimuth/fov are optional;
-    with both present the app draws an FOV wedge, otherwise a plain pin.
+    columns: name,lat,lon,left,right,azimuth,fov,elev_m,ground_m,
+             render,url,page_url,notes
+    A row whose `name` matches a camera attaches a `geo` block to it, so it
+    appears on the Map view. A row whose `name` matches nothing but has
+    render+url becomes a standalone map-only marker (view "map").
+    Direction is optional: give left/right FOV-edge headings (preferred) or
+    azimuth/fov directly; with either present the app draws an FOV wedge,
+    otherwise a plain pin. See parse_geo for the left/right -> azimuth/fov
+    math and the elev_m/ground_m (viewshed) fields.
 """
 import csv, json, os, sys
 from datetime import datetime, timezone
@@ -77,16 +80,39 @@ def _num(s):
 
 
 def parse_geo(r):
-    """Return a geo dict from a locations.csv row, or None if lat/lon missing."""
+    """Return a geo dict from a locations.csv row, or None if lat/lon missing.
+
+    Direction may be given two ways:
+      * left/right  -- compass headings of the FOV's left and right edges;
+                       the view sweeps clockwise (increasing heading) from
+                       left through the centre to right. Preferred input.
+      * azimuth/fov -- centreline heading and total width, given directly.
+    left/right win when both are present. Both edges/az+fov are optional
+    (a row with lat/lon only drops a plain pin, no wedge).
+
+    Elevation (elev_m = camera height ASL incl. building; ground_m = ground
+    ASL at the camera base) is carried through for a future viewshed feature
+    and does not affect the map today.
+    """
     lat, lon = _num(r.get("lat")), _num(r.get("lon"))
     if lat is None or lon is None:
         return None
     geo = {"lat": lat, "lon": lon}
+
+    left, right = _num(r.get("left")), _num(r.get("right"))
     az, fov = _num(r.get("azimuth")), _num(r.get("fov"))
-    if az is not None:
-        geo["azimuth"] = az
-    if fov is not None:
-        geo["fov"] = fov
+    if left is not None and right is not None:
+        fov = (right - left) % 360 or 360.0   # 0 width -> treat as full circle
+        az = (left + fov / 2) % 360
+    if az is not None and fov is not None:
+        geo["azimuth"] = round(az, 2)
+        geo["fov"] = round(fov, 2)
+
+    elev, ground = _num(r.get("elev_m")), _num(r.get("ground_m"))
+    if elev is not None:
+        geo["elev_m"] = elev
+    if ground is not None:
+        geo["ground_m"] = ground
     return geo
 
 

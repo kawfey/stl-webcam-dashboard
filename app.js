@@ -301,12 +301,19 @@ const camIcon = () =>
   L.divIcon({ className: 'cam-pin', iconSize: [18, 18], iconAnchor: [9, 9] });
 
 function fovLabel(cam) {
-  const { azimuth, fov } = cam.geo;
-  if (azimuth == null || fov == null) return cam.name;
-  const half = fov / 2;
-  const lo = ((azimuth - half) % 360 + 360) % 360;
-  const hi = ((azimuth + half) % 360 + 360) % 360;
-  return `${cam.name} — ${azimuth}° (${lo.toFixed(0)}°–${hi.toFixed(0)}°), ${fov}° FOV`;
+  const { azimuth, fov, elev_m, ground_m } = cam.geo;
+  let label = cam.name;
+  if (azimuth != null && fov != null) {
+    const half = fov / 2;
+    const lo = ((azimuth - half) % 360 + 360) % 360;
+    const hi = ((azimuth + half) % 360 + 360) % 360;
+    label += ` — ${azimuth}° (${lo.toFixed(0)}°–${hi.toFixed(0)}°), ${fov}° FOV`;
+  }
+  if (elev_m != null) {
+    label += ` · ${elev_m} m ASL`;
+    if (ground_m != null) label += ` (${(elev_m - ground_m).toFixed(0)} m AGL)`;
+  }
+  return label;
 }
 
 /* Geodesic destination point (haversine forward), bearing in compass degrees. */
