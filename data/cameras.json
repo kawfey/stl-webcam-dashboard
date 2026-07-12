@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-11T20:39:08Z",
+  "generated": "2026-07-12T03:13:42Z",
   "views": [
     {
       "key": "streams",
@@ -36,7 +36,11 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=a566f17e5b69e098457b8590d26e1087",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=a566f17e5b69e098457b8590d26e1087",
       "status": "live",
-      "notes": "Signed HLS (30-min wmsAuthSign); iframe frame.php directly"
+      "notes": "Signed HLS (30-min wmsAuthSign); iframe frame.php directly",
+      "geo": {
+        "lat": 38.7431,
+        "lon": -90.3651
+      }
     },
     {
       "name": "100 Above the Park (163-03-01)",
@@ -45,7 +49,11 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=03224dc411fe7e5ffd2d81eb5fe689dd",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=03224dc411fe7e5ffd2d81eb5fe689dd",
       "status": "live",
-      "notes": "KSDK Forest Park cam embeds this same uid"
+      "notes": "KSDK Forest Park cam embeds this same uid",
+      "geo": {
+        "lat": 38.644,
+        "lon": -90.2635
+      }
     },
     {
       "name": "Belleville Square (163-09-01)",
@@ -63,7 +71,11 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=2dc3c001ceec9118998247266e6af1f3",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=2dc3c001ceec9118998247266e6af1f3",
       "status": "live",
-      "notes": ""
+      "notes": "",
+      "geo": {
+        "lat": 38.6523,
+        "lon": -90.5608
+      }
     },
     {
       "name": "Edwardsville IL (163-07-01)",
@@ -72,7 +84,13 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=edf873d727f0630023fb76f435cf763c",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=edf873d727f0630023fb76f435cf763c",
       "status": "live",
-      "notes": ""
+      "notes": "",
+      "geo": {
+        "lat": 38.8116,
+        "lon": -89.9558,
+        "azimuth": 290.0,
+        "fov": 90.0
+      }
     },
     {
       "name": "Arnold MO (163-08-01)",
@@ -81,7 +99,13 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=bc34ef3137c34fe22a66fb2cb83a6688",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=bc34ef3137c34fe22a66fb2cb83a6688",
       "status": "live",
-      "notes": ""
+      "notes": "",
+      "geo": {
+        "lat": 38.4442,
+        "lon": -90.3777,
+        "azimuth": 202.0,
+        "fov": 20.0
+      }
     },
     {
       "name": "O'Fallon (163-06-01)",
@@ -370,21 +394,6 @@
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
       "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
-    },
-    {
-      "name": "Test Camera (Tower Grove Park)",
-      "view": "map",
-      "render": "iframe",
-      "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442",
-      "page_url": "https://www.slu.edu/webcam/doisy-research-center-view.php",
-      "status": "live",
-      "notes": "DUMMY placeholder to validate map + FOV cone; delete when real cameras are geolocated",
-      "geo": {
-        "lat": 38.6047,
-        "lon": -90.2497,
-        "azimuth": 34.0,
-        "fov": 70.0
-      }
     }
   ]
 }

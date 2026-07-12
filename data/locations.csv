@@ -1,2 +1,6 @@
 name,lat,lon,azimuth,fov,render,url,page_url,notes
-Test Camera (Tower Grove Park),38.6047,-90.2497,34,70,iframe,https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442,https://www.slu.edu/webcam/doisy-research-center-view.php,DUMMY placeholder to validate map + FOV cone; delete when real cameras are geolocated
+Airport Cam (163-05-01),38.7431,-90.3651,,,,,,Lambert-St. Louis Int'l Airport terminal area; viewing Southwest gates. Azimuth TBD
+100 Above the Park (163-03-01),38.6440,-90.2635,,,,,,100 N Kingshighway high-rise on E edge of Forest Park; PTZ that pans rarely — observed Arch (ESE) / due S / Forest Park golf course (SW). Cone TBD
+Chesterfield (163-01-01),38.6523,-90.5608,,,,,,360 PTZ atop Drury hotel; no fixed cone
+Edwardsville IL (163-07-01),38.8116,-89.9558,290,90,,,,Fixed per user notes
+Arnold MO (163-08-01),38.4442,-90.3777,202,20,,,,ASSUMED camera location pointed at Arnold water tower; confirm these coords are the camera not the tower

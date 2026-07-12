@@ -7,7 +7,8 @@
 'use strict';
 
 const IMG_REFRESH_MS = 20000; // still-image cadence while visible
-const FOV_RADIUS_M = 300;     // illustrative length of the FOV wedge on the map
+const FOV_RADIUS_M = 1600;    // illustrative length of the FOV wedge (these are
+                              // elevated, long-range cams); visible at metro zoom
 const MAP_KEY = 'map';
 
 const state = {
