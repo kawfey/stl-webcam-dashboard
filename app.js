@@ -136,9 +136,10 @@ function buildCard(cam, sink, opts = {}) {
   media.className = 'card-media';
   card.appendChild(media);
   mountMedia(media, cam, sink, opts);
-  // Streams and stills enlarge in the lightbox on click; link-outs go
-  // external, so they keep their own button. (#12)
-  if (cam.render !== 'link') {
+  // Click the media to enlarge — but NOT on Dacast (Arch) players, whose own
+  // controls must stay reachable in the grid (they don't autoplay). Those
+  // enlarge via the title-bar button only. Link-outs open externally. (#2, #11)
+  if (cam.render !== 'link' && !isDacast(cam)) {
     const open = document.createElement('button');
     open.type = 'button';
     open.className = 'card-open';
@@ -149,6 +150,8 @@ function buildCard(cam, sink, opts = {}) {
   card.appendChild(buildBody(cam));
   return card;
 }
+
+const isDacast = (cam) => /dacast\.com/.test(cam.url);
 
 function buildBody(cam) {
   const body = document.createElement('div');
@@ -172,6 +175,19 @@ function buildBody(cam) {
     badge.className = `badge ${cam.status}`;
     badge.textContent = cam.status.replace('_', ' ');
     body.appendChild(badge);
+  }
+  // Explicit enlarge control on every embeddable card — the reliable way to
+  // open the lightbox, and the only way for the Dacast cams (see buildCard).
+  if (cam.render !== 'link') {
+    const enlarge = document.createElement('button');
+    enlarge.type = 'button';
+    enlarge.className = 'card-enlarge';
+    enlarge.title = 'Enlarge';
+    enlarge.setAttribute('aria-label', `Enlarge ${cam.name}`);
+    enlarge.innerHTML =
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>';
+    enlarge.addEventListener('click', () => openModal(cam));
+    body.appendChild(enlarge);
   }
   return body;
 }
