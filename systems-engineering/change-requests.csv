@@ -1,0 +1,11 @@
+id,title,description,source,affects,type,priority,status,disposition
+CR-001,wetmet iframe intra-frame scroll capture,"Some wetmet feeds render larger than the card, so the iframe scrolls internally and steals page wheel scroll.",User report 2026-07-13,SYS-012; usability,Defect,Medium,Proposed,Tracked in development thread; not in baseline.
+CR-002,wetmet streams stall to black after minutes,Live wetmet embeds stop and show black; reload/click resumes.,User report 2026-07-13,SYS-014,Defect,High,Proposed,Root cause = ANOM-001; consider stream-health indicator.
+CR-003,Collapse offline streams into an 'Offline Streams (n)' section,Hide offline feeds; auto-restore to the grid when they return.,User request 2026-07-13,SYS-050 (new),Enhancement,Medium,Proposed,
+CR-004,24-hour Central Time clock in the top bar,Add a live CT clock.,User request 2026-07-13,new,Enhancement,Low,Proposed,
+CR-005,Per-stream uptime/downtime timer,"Show uptime for online, downtime since last good frame for offline ('Offline since: forever' if never).",User request 2026-07-13,new; SYS-050,Enhancement,Medium,Proposed,Raises client-side state persistence question -> see SE-MEMORY / SRS 8.2.
+CR-006,Stream-health indicator dot + freeze/desaturate last frame,"Green pulsing = streaming, solid yellow = stalled; keep last frame, desaturate, resume on hover.",User request 2026-07-13,SYS-014,Enhancement,Medium,Proposed,
+CR-007,Color-code and simplify map pins/tooltips,"Pins: green pulse=online stream, yellow=still, gray=offline. Tooltip: name, stream type, cardinal direction or PTZ, landmarks; drop raw az/el/fov.",User request 2026-07-13,SYS-043,Enhancement,Medium,Proposed,
+CR-008,Rename cameras by primary landmark with location subtitle,e.g. WWT Raceway feed actually shows the STL skyline; put detailed az/el/fov in the popup title bar.,User request 2026-07-13,SYS-043; data,Enhancement,Low,Proposed,
+CR-011,Per-camera FOV cone length to primary landmark,Extend each cone to its primary landmark distance (manual per camera).,User request 2026-07-13,SYS-048,Enhancement,Low,Proposed,Resolves TBR-003 when populated.
+CR-012,Viewshed for elevated cameras,Terrain-visibility overlay from camera elevation/FOV against a DEM/DSM.,User request; repo issue #1,STK-012; SYS-064,Enhancement,Low,Proposed,See GitHub issue #1.

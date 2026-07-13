@@ -1,0 +1,16 @@
+id,need,source_quote,rationale,priority,status,notes
+STK-001,The stakeholder needs to view St. Louis-area webcams from a single web page.,"""the stl webcam dashboard i'm making in HA and turn it into a web app""",Consolidate scattered camera bookmarks/feeds into one place.,High,Baselined,
+STK-002,The stakeholder needs to self-host the dashboard on a free static host and/or a personal website.,"""host on some free site like github pages or on my website n0ssc.com""",No hosting cost; owner controls publication.,High,Baselined,
+STK-003,The stakeholder needs to watch live video streams from cameras that provide them.,"original HA 'Streams' view; ""live streams""",Situational awareness of live conditions.,High,Baselined,
+STK-004,The stakeholder needs to view still-image cameras that update periodically.,original HA 'Stills' view,"Many sources are periodic JPEGs, not video.",High,Baselined,
+STK-005,The stakeholder needs to see each camera's geographic location and field of view on a map.,"""add a map view ... shows each camera's location AND Field of view""",Understand what each camera covers spatially.,High,Baselined,
+STK-006,The stakeholder needs to open a camera's stream by selecting it on the map.,"""clicking the pin opens the stream""",Map-to-stream navigation.,Medium,Baselined,
+STK-007,The stakeholder needs to add or change cameras without editing application code.,"""Adding a camera later""; cameras.csv workflow",Low-friction maintenance by a non-developer flow.,High,Baselined,
+STK-008,The stakeholder needs access to streams that resist embedding.,link-out cards for EarthCam/KMOV/SkyFOX,Some origins frame-bust; still want reachability.,Medium,Baselined,
+STK-009,The stakeholder needs to know each camera's operational status.,status badges (offline/event_only/dead),Distinguish working vs down feeds.,Medium,Baselined,
+STK-010,"The stakeholder needs the dashboard usable on mobile and desktop, in light and dark themes.",responsive + theme decisions,Personal use across devices.,Medium,Baselined,Device set and breakpoints not explicitly stated by stakeholder.
+STK-011,The stakeholder needs the dashboard to avoid overloading the browser when many feeds exist.,"""i'll keep an eye on it""; active-view-only decision",~40 embeds cannot all mount at once.,Medium,Baselined,Quantitative performance target not stated -> see TBD-007.
+STK-012,The stakeholder needs camera geolocation and elevation data captured to enable a future viewshed capability.,"""i'd like to see a viewshed from some of the higher cameras""",Downstream terrain-visibility analysis.,Low,Baselined,Viewshed itself is out of baseline scope (issue #1).
+STK-013,The stakeholder needs the system to run without a dedicated backend server.,"static hosting choice; ""no backend""",Zero ops; portable artifact.,High,Baselined,
+STK-014,The stakeholder needs the camera dataset to retain provenance and remain the single source of truth.,cameras.csv 'source of truth',Traceability of where each feed came from.,Medium,Baselined,
+STK-015,The stakeholder needs the dashboard scoped to the St. Louis area.,"""stl webcams"" / ""St. Louis area""",Defines relevant camera set.,High,Baselined,"""St. Louis area"" boundary undefined -> TBD-001."

@@ -1,0 +1,41 @@
+id,req_id,method,verification_statement,success_criteria,level,status_b38ad51,evidence
+VER-001,SYS-001,D,Load the dashboard and enumerate the view tabs.,"Streams, Stills, and Map tabs are present.",System,PASS,Browser screenshot 2026-07-11/12; 3 tabs shown.
+VER-002,SYS-004,"A,D",Inspect that switching views tears down prior media; observe only active-view embeds exist in the DOM.,No inactive-view iframes/videos remain mounted.,System,PASS,teardownView() clears grid; DOM inspected.
+VER-003,SYS-010,"T,D",Open Streams; observe the SLU HLS tile decode video frames.,A live video frame renders (currentTime advances).,System,PASS,currentTime advanced 0->40 s; campus frame visible.
+VER-004,SYS-011,T,"In a Chromium engine reporting canPlayType='maybe', confirm hls.js (MediaSource blob) is used, not native src.",video.src is a blob: URL; segments load.,Unit/System,PASS,"JS probe: srcBlob=true, rs=4."
+VER-005,SYS-014,T,Leave a wetmet stream tile visible and time until it stalls to a black frame.,Stream plays continuously for the display duration.,System,FAIL,ANOM-001: stalls to black after minutes; needs manual reload.
+VER-006,SYS-020,T,Instrument the still-image refresh; measure interval between requests while visible.,Interval <= 30 s.,Unit/System,PASS,IMG_REFRESH_MS=20000; cache-busted _t param each cycle.
+VER-007,SYS-021,"I,T",Inspect still-image request URLs across refresh cycles.,Each request carries a unique cache-busting param.,Unit,PASS,_t=<epoch> appended.
+VER-008,SYS-041,"A,D",Analyze wedge vertices for a known az/fov and confirm orientation on the map.,Wedge centerline = azimuth; edges = az +/- fov/2; opens toward the correct cardinal.,System,PASS,"Dummy az34/fov70 opened NE (359-69 deg), confirmed."
+VER-009,SYS-042,D,Click a map marker.,A modal opens showing that camera's stream.,System,PASS,Tower Grove test pin opened live MoBot feed.
+VER-010,SYS-044,A,Review destPoint() spherical destination math against the haversine forward formula.,Formula matches; outputs correct at metro distances.,Unit,PASS,Code review + geometry check.
+VER-011,SYS-046,I,Inspect the rendered map for OSM attribution.,Attribution control names OpenStreetMap.,System,PASS,'(c) OpenStreetMap contributors' visible.
+VER-012,SYS-062,T,Run parse_geo over left/right edge cases including wraparound and left/right-over-az precedence.,Computed azimuth/fov match expected for all cases.,Unit,PASS,"6/6 cases pass (359/69->34/70, etc.)."
+VER-013,SYS-063,T,Run the converter over source rows including 'skip' rows.,No 'skip' row appears in cameras.json.,Unit,PASS,16 skipped at MVP; 13 at b38ad51.
+VER-014,SYS-080,"I,D",Serve the repo as static files and load it; confirm no server code executes.,Site works from a plain static file server.,System,PASS,python -m http.server; GitHub Pages live.
+VER-015,SYS-081,I,Grep the deployed sources for external script/style hosts.,No external CDN <script>/<link> at runtime.,System,PASS,hls.js + Leaflet vendored under vendor/.
+VER-016,SYS-082,T,Resize viewport to 320 px; check for horizontal overflow.,No horizontal page scroll at >=320 px.,System,PASS,Responsive grid collapses to 1 column.
+VER-017,SYS-090,D,Enable GitHub Pages from default branch root and load the published URL.,Published site returns 200 and renders.,System,PASS,kawfey.github.io/stl-webcam-dashboard live.
+VER-018,SYS-091,D,Push a commit to the default branch and observe redeploy.,Published site reflects the new commit.,System,PASS,Observed on prior deploys.
+VER-019,SYS-100,I,Check each camera against the (to-be-defined) St. Louis area boundary.,All cameras fall inside the defined boundary.,System,BLOCKED,Boundary undefined (TBD-001); cannot verify.
+VER-020,SYS-050,D,View a non-live camera.,A status indicator distinguishes it from live.,System,PASS,offline/event_only/dead badges shown.
+VER-021,SYS-002,D,Activate each tab in turn.,Exactly one view is active/rendered at a time.,System,PASS,aria-selected toggles; prior view torn down.
+VER-022,SYS-003,"I,D",Compare each tab-label count to the dataset.,Label count equals cameras in that view.,System,PASS,Streams(21)/Stills(19)/Map(13) matched dataset.
+VER-023,SYS-012,D,View an iframe-classified camera.,The embedded frame renders the feed.,System,PASS,wetmet/Dacast tiles rendered.
+VER-024,SYS-013,D,Scroll an HLS card into the viewport.,Playback starts without a manual click.,System,PASS,Autostart observed for users; flaky only under headless automation.
+VER-025,SYS-030,D,Activate a link-out card.,The source page opens in a new browsing context.,System,PASS,EarthCam/KMOV/SkyFOX link-outs open new tab.
+VER-026,SYS-040,D,Open the Map view and count markers.,One marker per geolocated camera.,System,PASS,13 markers for 13 geolocated cameras.
+VER-027,SYS-043,D,Hover a map marker.,A tooltip identifies the camera.,System,PASS,Tooltip shows camera name (+ current az/fov).
+VER-028,SYS-045,"I,D",Observe base-map tile requests on the Map view.,Tiles load from OpenStreetMap.,System,PASS,tile.openstreetmap.org requests observed.
+VER-029,SYS-047,D,Enter the Map view with multiple cameras.,Initial extent includes every geolocated camera.,System,PASS,fitBounds shows all pins across the metro.
+VER-030,SYS-048,"I,D",Inspect wedge ground length and visibility at metro zoom.,Wedge ~1600 m and legible at overview zoom.,System,PASS,FOV_RADIUS_M=1600.
+VER-031,SYS-060,I,Inspect runtime data retrieval.,Dataset comes from a single JSON fetch.,System,PASS,fetch('data/cameras.json').
+VER-032,SYS-061,"I,D",Run the converter and diff the output.,cameras.json regenerates from the CSV source.,System,PASS,python3 data/convert.py idempotent.
+VER-033,SYS-064,I,Inspect geo blocks in cameras.json.,Each has lat/lon; optional az/fov/elev_m/ground_m present where supplied.,Unit,PASS,13 geo blocks inspected.
+VER-034,SYS-065,T,Exercise converter name-match and unmatched-marker paths.,Matched rows attach; unmatched render+url become map-only markers.,Unit,PASS,attached/standalone counts verified.
+VER-035,SYS-066,I,Inspect the render field of every camera record.,"Each is one of {image, hls, iframe, link}.",Unit,PASS,No out-of-set render values.
+VER-036,SYS-070,"A,I",Trace media request hosts.,Media loads from origin hosts; no proxy origin.,System,PASS,Requests go to pixelcaster/wetmet/gray.tv etc.
+VER-037,SYS-071,I,Inspect referrer policy on media elements.,A privacy-preserving referrer policy is set where supported.,Unit,PASS,img referrerPolicy=no-referrer.
+VER-038,SYS-083,D,Toggle the OS/browser light-dark preference.,Theme adapts accordingly.,System,PASS,prefers-color-scheme honored.
+VER-039,SYS-084,D,Resize the viewport across breakpoints.,Card grid reflows column count.,System,PASS,auto-fill minmax grid reflows.
+VER-040,SYS-092,A,Review asset path style and host-independence.,All asset paths are relative; copy-deploy is feasible.,Analysis,PASS,No absolute-origin asset URLs.
