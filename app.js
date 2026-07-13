@@ -25,13 +25,14 @@ const $ = (sel) => document.querySelector(sel);
 
 /* ---------- media resource sinks ---------- */
 
-const newSink = () => ({ timers: [], hls: [], observer: null });
+const newSink = () => ({ timers: [], hls: [], observer: null, cleanups: [] });
 
 function destroySink(sink) {
   if (!sink) return;
   sink.timers.forEach(clearInterval);
   sink.hls.forEach((h) => h.destroy());
   if (sink.observer) sink.observer.disconnect();
+  sink.cleanups.forEach((fn) => fn());
 }
 
 /* ---------- boot ---------- */
@@ -135,6 +136,16 @@ function buildCard(cam, sink, opts = {}) {
   media.className = 'card-media';
   card.appendChild(media);
   mountMedia(media, cam, sink, opts);
+  // Streams and stills enlarge in the lightbox on click; link-outs go
+  // external, so they keep their own button. (#12)
+  if (cam.render !== 'link') {
+    const open = document.createElement('button');
+    open.type = 'button';
+    open.className = 'card-open';
+    open.setAttribute('aria-label', `Enlarge ${cam.name}`);
+    open.addEventListener('click', () => openModal(cam));
+    media.appendChild(open);
+  }
   card.appendChild(buildBody(cam));
   return card;
 }
@@ -192,6 +203,13 @@ function mountImage(media, cam, sink) {
   sink.timers.push(timer);
 }
 
+// wetmet frame.php hardcodes the video at 640x360 with an 8px body margin (a
+// 656x376 content box) and no responsive class, so a smaller box clips it and
+// forces internal scroll. We can't touch the cross-origin player, so size the
+// iframe to that natural box (CSS) and scale + shift it to fill the card. (#11)
+const WETMET_VIDEO_W = 640; // video width inside the frame
+const WETMET_MARGIN = 8;    // default body margin around it
+
 function mountIframe(media, cam, sink) {
   const frame = document.createElement('iframe');
   frame.src = cam.url;
@@ -202,25 +220,25 @@ function mountIframe(media, cam, sink) {
   media.appendChild(frame);
 
   if (/wetmet\.net/.test(cam.url)) {
-    const reload = () => {
-      const sep = cam.url.includes('?') ? '&' : '?';
-      frame.src = `${cam.url}${sep}_r=${Date.now()}`;
+    frame.classList.add('wetmet-frame');
+    const fit = () => {
+      const w = media.clientWidth;
+      if (!w) return;
+      // Scale the 640px video to the box width and shift out the 8px body
+      // margin so the video fills the card edge-to-edge (no white border).
+      const s = w / WETMET_VIDEO_W;
+      frame.style.transform = `translate(${-WETMET_MARGIN * s}px, ${-WETMET_MARGIN * s}px) scale(${s})`;
     };
-    // wetmet frame.php renders some feeds larger than the card, so the iframe
-    // scrolls internally and steals the page's wheel. A transparent guard on
-    // top catches the wheel (it can't scroll, so the page does) and a click
-    // reloads the frame. (#2)
-    const guard = document.createElement('button');
-    guard.type = 'button';
-    guard.className = 'iframe-guard';
-    guard.title = 'Click to reload';
-    guard.setAttribute('aria-label', `Reload ${cam.name}`);
-    guard.addEventListener('click', reload);
-    media.appendChild(guard);
+    const ro = new ResizeObserver(fit);
+    ro.observe(media);
+    sink.cleanups.push(() => ro.disconnect());
     // wetmet feeds go black after ~300s; reload just before that so a frame
     // left on screen never stalls. Cleared on view/modal teardown. (#3)
     const timer = setInterval(() => {
-      if (document.visibilityState === 'visible') reload();
+      if (document.visibilityState === 'visible') {
+        const sep = cam.url.includes('?') ? '&' : '?';
+        frame.src = `${cam.url}${sep}_r=${Date.now()}`;
+      }
     }, WETMET_REFRESH_MS);
     sink.timers.push(timer);
   }
@@ -238,20 +256,9 @@ function mountHls(media, cam, sink, opts = {}) {
 
   if (!opts.lazyHls) { start(); return; }
 
-  // Grid: show a play badge and auto-start (muted) when scrolled into view.
-  const overlay = document.createElement('button');
-  overlay.className = 'play-overlay';
-  overlay.type = 'button';
-  overlay.setAttribute('aria-label', `Play ${cam.name}`);
-  overlay.innerHTML =
-    '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.45)"/><path d="M9.5 7.5v9l7-4.5z" fill="#fff"/></svg>';
-  media.appendChild(overlay);
-
-  let started = false;
-  const go = () => { if (started) return; started = true; overlay.remove(); start(); };
-  overlay.addEventListener('click', go);
+  // Grid: auto-start (muted) when scrolled into view.
   if (!sink.observer) sink.observer = new IntersectionObserver(onIntersect, { rootMargin: '200px' });
-  media._start = go;
+  media._start = start;
   sink.observer.observe(media);
 }
 
@@ -437,7 +444,7 @@ function openModal(cam) {
   title.className = 'modal-title';
   title.textContent = cam.name;
   heading.appendChild(title);
-  const detail = geoDetail(cam);
+  const detail = [typeLabel(cam), geoDetail(cam)].filter(Boolean).join(' · ');
   if (detail) {
     const sub = document.createElement('span');
     sub.className = 'modal-sub';
