@@ -180,6 +180,30 @@ main { padding: 18px; }
   background: #000;
 }
 
+/* wetmet frames render at a fixed 656x376 box; scale (set in JS) fits them
+   to the card so the whole video shows instead of a clipped, scrollable crop */
+.card-media iframe.wetmet-frame {
+  inset: auto;
+  top: 0;
+  left: 0;
+  width: 656px;
+  height: 376px;
+  transform-origin: 0 0;
+}
+
+/* transparent click layer that opens the lightbox for a stream/still */
+.card-open {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+  transition: background 0.15s;
+}
+.card-open:hover { background: rgba(0, 0, 0, 0.08); }
+
 .card-media .placeholder {
   position: absolute;
   inset: 0;
@@ -200,6 +224,8 @@ main { padding: 18px; }
 }
 
 .card-title {
+  flex: 1 1 auto;
+  min-width: 0;
   font-weight: 570;
   font-size: 14px;
   line-height: 1.3;
@@ -210,6 +236,24 @@ main { padding: 18px; }
 
 .card-title a { color: inherit; text-decoration: none; }
 .card-title a:hover { text-decoration: underline; }
+
+/* enlarge control in the card title bar (opens the lightbox) */
+.card-enlarge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.card-enlarge:hover { background: var(--panel-2); color: var(--text); }
 
 .badge {
   margin-left: auto;
@@ -246,20 +290,6 @@ main { padding: 18px; }
   background: var(--panel);
 }
 .link-cta:hover { background: var(--accent); color: var(--accent-contrast); }
-
-/* ---- HLS play overlay ---- */
-.play-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.25);
-  cursor: pointer;
-  border: 0;
-  color: #fff;
-}
-.play-overlay svg { width: 56px; height: 56px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
 
 /* ---- Map view ---- */
 .grid.map-mode {
@@ -313,17 +343,6 @@ main { padding: 18px; }
 }
 
 .leaflet-container { font: inherit; background: var(--panel-2); }
-
-/* transparent guard over wetmet iframes: frees page scroll, click reloads (#2) */
-.iframe-guard {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-}
 
 /* ---- Lightbox ---- */
 .modal-overlay {
