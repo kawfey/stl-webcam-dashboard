@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-12T03:13:42Z",
+  "generated": "2026-07-12T07:49:22Z",
   "views": [
     {
       "key": "streams",
@@ -18,16 +18,32 @@
       "url": "https://cs5.pixelcaster.com/live/slu-caroline.stream/playlist.m3u8",
       "page_url": "https://www.slu.edu/webcam/doisy-research-center-view.php",
       "status": "live",
-      "notes": "Pixelcaster HLS; unauthenticated; verified. Sibling SLU cams exist (Clock Tower/Quad/BSC/Sports Complex)"
+      "notes": "Pixelcaster HLS; unauthenticated; verified. Sibling SLU cams exist (Clock Tower/Quad/BSC/Sports Complex)",
+      "geo": {
+        "lat": 38.622317,
+        "lon": -90.236445,
+        "azimuth": 15.0,
+        "fov": 185.0,
+        "elev_m": 177.0,
+        "ground_m": 164.0
+      }
     },
     {
       "name": "MO DNR Pollution Cam (St. Marys)",
       "view": "stills",
       "render": "image",
-      "url": "https://dnr.mo.gov/sites/dnr/files/styles/large/public/media/framegrabs/cf006e2d-134f-4519-a2bc-f1fc49f59df9/0/framegrab.jpg",
+      "url": "https://dnr.mo.gov/sites/dnr/files/styles/large/public/media/framegrabs/cf006e2d-134f-4519-a2bc-f1fc49f59df9/0/framegrab.jpg?itok=uyQ_hayU",
       "page_url": "https://dnr.mo.gov/air/hows-air/current-quality/st-louis-camera",
       "status": "live",
-      "notes": "JPEG updated every minute; atop SSM St. Marys 6420 Clayton Rd. Bookmark URL 301s to /current-quality/"
+      "notes": "JPEG updated every minute; atop SSM St. Marys 6420 Clayton Rd. Drupal itok token appended 2026-07-12 (bare URL began 404ing; token is path-stable)",
+      "geo": {
+        "lat": 38.633197,
+        "lon": -90.310478,
+        "azimuth": 100.98,
+        "fov": 27.64,
+        "elev_m": 207.0,
+        "ground_m": 180.0
+      }
     },
     {
       "name": "Airport Cam (163-05-01)",
@@ -38,8 +54,12 @@
       "status": "live",
       "notes": "Signed HLS (30-min wmsAuthSign); iframe frame.php directly",
       "geo": {
-        "lat": 38.7431,
-        "lon": -90.3651
+        "lat": 38.732399,
+        "lon": -90.346729,
+        "azimuth": 308.5,
+        "fov": 10.21,
+        "elev_m": 222.0,
+        "ground_m": 183.0
       }
     },
     {
@@ -51,8 +71,12 @@
       "status": "live",
       "notes": "KSDK Forest Park cam embeds this same uid",
       "geo": {
-        "lat": 38.644,
-        "lon": -90.2635
+        "lat": 38.6428,
+        "lon": -90.2648,
+        "azimuth": 233.0,
+        "fov": 266.0,
+        "elev_m": 263.0,
+        "ground_m": 151.0
       }
     },
     {
@@ -74,7 +98,9 @@
       "notes": "",
       "geo": {
         "lat": 38.6523,
-        "lon": -90.5608
+        "lon": -90.5608,
+        "elev_m": 240.0,
+        "ground_m": 199.0
       }
     },
     {
@@ -86,10 +112,12 @@
       "status": "live",
       "notes": "",
       "geo": {
-        "lat": 38.8116,
-        "lon": -89.9558,
+        "lat": 38.811597,
+        "lon": -89.955851,
         "azimuth": 290.0,
-        "fov": 90.0
+        "fov": 90.0,
+        "elev_m": 174.0,
+        "ground_m": 165.0
       }
     },
     {
@@ -104,7 +132,9 @@
         "lat": 38.4442,
         "lon": -90.3777,
         "azimuth": 202.0,
-        "fov": 20.0
+        "fov": 20.0,
+        "elev_m": 182.0,
+        "ground_m": 159.0
       }
     },
     {
@@ -123,7 +153,13 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442",
       "status": "live",
-      "notes": ""
+      "notes": "",
+      "geo": {
+        "lat": 38.613974,
+        "lon": -90.25732,
+        "azimuth": 276.2,
+        "fov": 28.0
+      }
     },
     {
       "name": "Old Town Florissant (163-10-01)",
@@ -135,13 +171,21 @@
       "notes": ""
     },
     {
-      "name": "St. Charles (163-04-01)",
+      "name": "WWT Raceway (163-04-01)",
       "view": "streams",
       "render": "iframe",
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=427e8434470c40b803903f7db97b04e9",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=427e8434470c40b803903f7db97b04e9",
       "status": "live",
-      "notes": ". Dropped from KSDK index page as of 2026-07 but frame still live"
+      "notes": "KSDK labeled this St. Charles but feed shows WWT Raceway per user geoguess 2026-07-12. Dropped from KSDK index page as of 2026-07 but frame still live",
+      "geo": {
+        "lat": 38.6511,
+        "lon": -90.1365,
+        "azimuth": 244.55,
+        "fov": 14.08,
+        "elev_m": 158.0,
+        "ground_m": 129.0
+      }
     },
     {
       "name": "St. Charles Main Street (163-11-01)",
@@ -159,7 +203,15 @@
       "url": "https://iframe.dacast.com/live/b44603d7-b221-fc91-5fa2-f9d35bf908f2/e263ea86-84e6-66eb-1b29-646a22389f14",
       "page_url": "https://www.archpark.org/visit/webcams",
       "status": "live",
-      "notes": "Dacast iframe extracted from archpark.org"
+      "notes": "Dacast iframe extracted from archpark.org",
+      "geo": {
+        "lat": 38.6245,
+        "lon": -90.1845,
+        "azimuth": 113.58,
+        "fov": 111.82,
+        "elev_m": 326.0,
+        "ground_m": 136.0
+      }
     },
     {
       "name": "Arch Park West View",
@@ -168,7 +220,15 @@
       "url": "https://iframe.dacast.com/live/b44603d7-b221-fc91-5fa2-f9d35bf908f2/2c46c826-e173-5e74-db7f-ee319f0fb8a6",
       "page_url": "https://www.archpark.org/visit/webcams",
       "status": "live",
-      "notes": "Dacast iframe extracted from archpark.org"
+      "notes": "Dacast iframe extracted from archpark.org",
+      "geo": {
+        "lat": 38.6247,
+        "lon": -90.1852,
+        "azimuth": 287.73,
+        "fov": 107.67,
+        "elev_m": 326.0,
+        "ground_m": 136.0
+      }
     },
     {
       "name": "Forest Park Boathouse (Nest)",
@@ -204,7 +264,15 @@
       "url": "https://www.earthcam.com/usa/missouri/stlouis/?cam=arch_riverview",
       "page_url": "https://www.earthcam.com/usa/missouri/stlouis/?cam=arch_riverview",
       "status": "live",
-      "notes": "Signed expiring HLS + frame-busting; link-out per user"
+      "notes": "Signed expiring HLS + frame-busting; link-out per user",
+      "geo": {
+        "lat": 38.622414,
+        "lon": -90.175545,
+        "azimuth": 285.32,
+        "fov": 39.13,
+        "elev_m": 138.0,
+        "ground_m": 126.0
+      }
     },
     {
       "name": "KMOV Live Stream",
@@ -240,7 +308,15 @@
       "url": "https://webpubcontent.gray.tv/kmov/weather/Barnes%20East.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "geo": {
+        "lat": 38.635143,
+        "lon": -90.263975,
+        "azimuth": 104.87,
+        "fov": 32.98,
+        "elev_m": 225.0,
+        "ground_m": 155.0
+      }
     },
     {
       "name": "KMOV 360 Hilton Ballpark East",
