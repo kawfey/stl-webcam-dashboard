@@ -111,8 +111,23 @@ html, body {
   color: var(--accent-contrast);
 }
 
-.topbar-meta {
+.topbar-right {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.clock {
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.topbar-meta {
   color: var(--muted);
   font-size: 13px;
   white-space: nowrap;
@@ -261,19 +276,54 @@ main { padding: 18px; }
   z-index: 0;
 }
 
-/* camera pin: a filled dot with a soft ring */
+/* camera pin: a filled dot with a soft ring, coloured by status (#7) */
 .cam-pin {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: var(--accent);
   border: 2px solid #fff;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent),
-              0 1px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   cursor: pointer;
+}
+/* online stream: green with a pulsing ring */
+.cam-pin--stream {
+  background: var(--live);
+  animation: pin-pulse 2s ease-out infinite;
+}
+/* still image: solid yellow */
+.cam-pin--still {
+  background: var(--warn);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--warn) 40%, transparent),
+              0 1px 4px rgba(0, 0, 0, 0.4);
+}
+/* offline: low-contrast grey, deliberately not attention-grabbing */
+.cam-pin--offline {
+  background: var(--dead);
+  border-color: color-mix(in srgb, #fff 70%, transparent);
+  opacity: 0.75;
+}
+
+@keyframes pin-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--live) 55%, transparent),
+                     0 1px 4px rgba(0, 0, 0, 0.4); }
+  70%  { box-shadow: 0 0 0 9px color-mix(in srgb, var(--live) 0%, transparent),
+                     0 1px 4px rgba(0, 0, 0, 0.4); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--live) 0%, transparent),
+                     0 1px 4px rgba(0, 0, 0, 0.4); }
 }
 
 .leaflet-container { font: inherit; background: var(--panel-2); }
+
+/* transparent guard over wetmet iframes: frees page scroll, click reloads (#2) */
+.iframe-guard {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
 
 /* ---- Lightbox ---- */
 .modal-overlay {
@@ -304,7 +354,18 @@ main { padding: 18px; }
   padding: 10px 12px;
 }
 
+.modal-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
 .modal-title { font-weight: 600; }
+.modal-sub {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
 
 .modal-close {
   margin-left: auto;
