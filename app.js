@@ -6,7 +6,9 @@
 
 'use strict';
 
-const IMG_REFRESH_MS = 20000; // still-image cadence while visible
+const IMG_REFRESH_MS = 20000;    // still-image cadence while visible
+const WETMET_REFRESH_MS = 285000; // wetmet feeds stall to black at ~300s;
+                                  // reload just before that (#3)
 const FOV_RADIUS_M = 1600;    // illustrative length of the FOV wedge (these are
                               // elevated, long-range cams); visible at metro zoom
 const MAP_KEY = 'map';
@@ -48,9 +50,23 @@ async function boot() {
   buildTabs();
   selectView(state.data.views[0].key);
   updateMeta();
+  startClock();
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
   });
+}
+
+// 24-hour Central Time clock in the top bar. (#5)
+function startClock() {
+  const el = $('#clock');
+  if (!el) return;
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false, timeZone: 'America/Chicago',
+  });
+  const tick = () => { el.textContent = `${fmt.format(new Date())} CT`; };
+  tick();
+  setInterval(tick, 1000);
 }
 
 const geoCameras = () => state.data.cameras.filter((c) => c.geo);
@@ -153,7 +169,7 @@ function buildBody(cam) {
 
 function mountMedia(media, cam, sink, opts = {}) {
   if (cam.render === 'image') mountImage(media, cam, sink);
-  else if (cam.render === 'iframe') mountIframe(media, cam);
+  else if (cam.render === 'iframe') mountIframe(media, cam, sink);
   else if (cam.render === 'hls') mountHls(media, cam, sink, opts);
   else if (cam.render === 'link') mountLink(media, cam);
 }
@@ -176,7 +192,7 @@ function mountImage(media, cam, sink) {
   sink.timers.push(timer);
 }
 
-function mountIframe(media, cam) {
+function mountIframe(media, cam, sink) {
   const frame = document.createElement('iframe');
   frame.src = cam.url;
   frame.loading = 'lazy';
@@ -184,6 +200,30 @@ function mountIframe(media, cam) {
   frame.allowFullscreen = true;
   frame.referrerPolicy = 'no-referrer-when-downgrade';
   media.appendChild(frame);
+
+  if (/wetmet\.net/.test(cam.url)) {
+    const reload = () => {
+      const sep = cam.url.includes('?') ? '&' : '?';
+      frame.src = `${cam.url}${sep}_r=${Date.now()}`;
+    };
+    // wetmet frame.php renders some feeds larger than the card, so the iframe
+    // scrolls internally and steals the page's wheel. A transparent guard on
+    // top catches the wheel (it can't scroll, so the page does) and a click
+    // reloads the frame. (#2)
+    const guard = document.createElement('button');
+    guard.type = 'button';
+    guard.className = 'iframe-guard';
+    guard.title = 'Click to reload';
+    guard.setAttribute('aria-label', `Reload ${cam.name}`);
+    guard.addEventListener('click', reload);
+    media.appendChild(guard);
+    // wetmet feeds go black after ~300s; reload just before that so a frame
+    // left on screen never stalls. Cleared on view/modal teardown. (#3)
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') reload();
+    }, WETMET_REFRESH_MS);
+    sink.timers.push(timer);
+  }
 }
 
 function mountHls(media, cam, sink, opts = {}) {
@@ -279,15 +319,15 @@ function renderMap() {
     bounds.extend([lat, lon]);
 
     if (azimuth != null && fov != null) {
-      const pts = fovPolygon(cam.geo, FOV_RADIUS_M);
+      const pts = fovPolygon(cam.geo, cam.geo.range_m || FOV_RADIUS_M);
       L.polygon(pts, {
         color: '#2f6fed', weight: 1, fillColor: '#2f6fed', fillOpacity: 0.22,
       }).addTo(map);
       pts.forEach((p) => bounds.extend(p));
     }
 
-    const marker = L.marker([lat, lon], { icon: camIcon(), title: cam.name }).addTo(map);
-    marker.bindTooltip(fovLabel(cam), { direction: 'top', offset: [0, -10] });
+    const marker = L.marker([lat, lon], { icon: camIcon(cam), title: cam.name }).addTo(map);
+    marker.bindTooltip(tooltipHtml(cam), { direction: 'top', offset: [0, -10] });
     marker.on('click', () => openModal(cam));
   }
 
@@ -297,16 +337,53 @@ function renderMap() {
   setTimeout(() => map.invalidateSize(), 0);
 }
 
-const camIcon = () =>
-  L.divIcon({ className: 'cam-pin', iconSize: [18, 18], iconAnchor: [9, 9] });
+// Pin/status bucket used for colour + the tooltip's type label. (#7)
+function pinStatus(cam) {
+  if (cam.status === 'offline' || cam.status === 'dead') return 'offline';
+  if (cam.render === 'image') return 'still';
+  return 'stream'; // hls / iframe / link-out, live
+}
 
-function fovLabel(cam) {
-  const { azimuth, fov } = cam.geo;
-  if (azimuth == null || fov == null) return cam.name;
-  const half = fov / 2;
-  const lo = ((azimuth - half) % 360 + 360) % 360;
-  const hi = ((azimuth + half) % 360 + 360) % 360;
-  return `${cam.name} — ${azimuth}° (${lo.toFixed(0)}°–${hi.toFixed(0)}°), ${fov}° FOV`;
+const camIcon = (cam) =>
+  L.divIcon({ className: `cam-pin cam-pin--${pinStatus(cam)}`, iconSize: [18, 18], iconAnchor: [9, 9] });
+
+const COMPASS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
+                 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+const cardinal = (deg) => COMPASS[Math.round(((deg % 360) + 360) % 360 / 22.5) % 16];
+
+function typeLabel(cam) {
+  if (cam.status === 'offline' || cam.status === 'dead') return 'Offline';
+  if (cam.render === 'image') return 'Still image';
+  if (cam.render === 'link') return 'Link-out';
+  if (cam.status === 'event_only') return 'Event only';
+  return 'Stream';
+}
+
+// Hover tooltip: name + type + heading (cardinal if fixed, "PTZ" if it pans). (#8)
+function tooltipHtml(cam) {
+  const g = cam.geo || {};
+  let dir = '';
+  if (g.ptz) dir = 'PTZ';
+  else if (g.azimuth != null) dir = cardinal(g.azimuth);
+  const line2 = [typeLabel(cam), dir].filter(Boolean).join(' · ');
+  return `<strong>${cam.name}</strong><br>${line2}`;
+}
+
+// Detailed az / FOV / elevation for the stream popup title bar. (#8)
+function geoDetail(cam) {
+  const g = cam.geo;
+  if (!g) return '';
+  const parts = [];
+  if (g.azimuth != null && g.fov != null) {
+    parts.push(`${g.azimuth}° ${cardinal(g.azimuth)}${g.ptz ? ' (PTZ)' : ''}`);
+    parts.push(`${g.fov}° FOV`);
+  }
+  if (g.elev_m != null) {
+    parts.push(g.ground_m != null
+      ? `${g.elev_m} m ASL (${(g.elev_m - g.ground_m).toFixed(0)} m AGL)`
+      : `${g.elev_m} m ASL`);
+  }
+  return parts.join(' · ');
 }
 
 /* Geodesic destination point (haversine forward), bearing in compass degrees. */
@@ -354,16 +431,26 @@ function openModal(cam) {
 
   const bar = document.createElement('div');
   bar.className = 'modal-bar';
+  const heading = document.createElement('div');
+  heading.className = 'modal-heading';
   const title = document.createElement('span');
   title.className = 'modal-title';
   title.textContent = cam.name;
+  heading.appendChild(title);
+  const detail = geoDetail(cam);
+  if (detail) {
+    const sub = document.createElement('span');
+    sub.className = 'modal-sub';
+    sub.textContent = detail;
+    heading.appendChild(sub);
+  }
   const close = document.createElement('button');
   close.className = 'modal-close';
   close.type = 'button';
   close.setAttribute('aria-label', 'Close');
   close.textContent = '✕';
   close.addEventListener('click', closeModal);
-  bar.append(title, close);
+  bar.append(heading, close);
 
   dialog.append(bar, media);
   overlay.appendChild(dialog);
