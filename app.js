@@ -6,7 +6,9 @@
 
 'use strict';
 
-const IMG_REFRESH_MS = 20000; // still-image cadence while visible
+const IMG_REFRESH_MS = 20000;    // still-image cadence while visible
+const WETMET_REFRESH_MS = 285000; // wetmet feeds stall to black at ~300s;
+                                  // reload just before that (#3)
 const FOV_RADIUS_M = 1600;    // illustrative length of the FOV wedge (these are
                               // elevated, long-range cams); visible at metro zoom
 const MAP_KEY = 'map';
@@ -167,7 +169,7 @@ function buildBody(cam) {
 
 function mountMedia(media, cam, sink, opts = {}) {
   if (cam.render === 'image') mountImage(media, cam, sink);
-  else if (cam.render === 'iframe') mountIframe(media, cam);
+  else if (cam.render === 'iframe') mountIframe(media, cam, sink);
   else if (cam.render === 'hls') mountHls(media, cam, sink, opts);
   else if (cam.render === 'link') mountLink(media, cam);
 }
@@ -190,7 +192,7 @@ function mountImage(media, cam, sink) {
   sink.timers.push(timer);
 }
 
-function mountIframe(media, cam) {
+function mountIframe(media, cam, sink) {
   const frame = document.createElement('iframe');
   frame.src = cam.url;
   frame.loading = 'lazy';
@@ -199,21 +201,28 @@ function mountIframe(media, cam) {
   frame.referrerPolicy = 'no-referrer-when-downgrade';
   media.appendChild(frame);
 
-  // wetmet frame.php renders some feeds larger than the card, so the iframe
-  // scrolls internally and steals the page's wheel. A transparent guard on
-  // top catches the wheel (it can't scroll, so the page does) and turns a
-  // click into a reload — which also resumes a stalled/black feed. (#2, #3)
   if (/wetmet\.net/.test(cam.url)) {
+    const reload = () => {
+      const sep = cam.url.includes('?') ? '&' : '?';
+      frame.src = `${cam.url}${sep}_r=${Date.now()}`;
+    };
+    // wetmet frame.php renders some feeds larger than the card, so the iframe
+    // scrolls internally and steals the page's wheel. A transparent guard on
+    // top catches the wheel (it can't scroll, so the page does) and a click
+    // reloads the frame. (#2)
     const guard = document.createElement('button');
     guard.type = 'button';
     guard.className = 'iframe-guard';
     guard.title = 'Click to reload';
     guard.setAttribute('aria-label', `Reload ${cam.name}`);
-    guard.addEventListener('click', () => {
-      const sep = cam.url.includes('?') ? '&' : '?';
-      frame.src = `${cam.url}${sep}_r=${Date.now()}`;
-    });
+    guard.addEventListener('click', reload);
     media.appendChild(guard);
+    // wetmet feeds go black after ~300s; reload just before that so a frame
+    // left on screen never stalls. Cleared on view/modal teardown. (#3)
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') reload();
+    }, WETMET_REFRESH_MS);
+    sink.timers.push(timer);
   }
 }
 
