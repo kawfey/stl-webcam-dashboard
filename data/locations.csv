@@ -1,14 +1,14 @@
-name,lat,lon,left,right,azimuth,fov,elev_m,ground_m,render,url,page_url,notes
-SLU South Campus (Doisy),38.622317,-90.236445,282.5,107.5,15,185,177,164,,,,PTZ with 4 scheduled positions; cone is the full sweep envelope per user
-MO DNR Pollution Cam (St. Marys),38.633197,-90.310478,87.16,114.8,100.98,27.64,207,180,,,,
-Airport Cam (163-05-01),38.732399,-90.346729,303.4,313.61,308.51,10.21,222,183,,,,
-100 Above the Park (163-03-01),38.6428,-90.2648,100,6,233,266,263,151,,,,PTZ that pans rarely; cone is the observed sweep envelope per user
-Chesterfield (163-01-01),38.6523,-90.5608,,,,,240,199,,,,360 PTZ atop Drury hotel; azimuth coverage unknown - pin only
-Edwardsville IL (163-07-01),38.811597,-89.955851,245,335,290,90,174,165,,,,
-Arnold MO (163-08-01),38.4442,-90.3777,192,212,202,20,182,159,,,,Pointed at Arnold city water tower
-MoBot Garden (163-02-01),38.613974,-90.25732,262.2,290.2,276.2,28,,,,,,Elevations TBD
-WWT Raceway (163-04-01),38.6511,-90.1365,237.51,251.59,244.55,14.08,158,129,,,,Coords ESTIMATED by Claude at WWT Raceway grandstand from user geoguess; user extents+elevations; verify position
-Arch Park East View,38.6245,-90.1845,57.67,169.49,113.58,111.82,326,136,,,,Atop Gateway Arch; pin offset E of true position to declutter from West view
-Arch Park West View,38.6247,-90.1852,233.89,341.56,287.73,107.67,326,136,,,,Atop Gateway Arch; pin offset W of true position to declutter from East view
-EarthCam Arch Riverview,38.622414,-90.175545,265.76,304.89,285.33,39.13,138,126,,,,Malcolm Martin Memorial Park side; render=link so pin opens link-out
-KMOV Barnes-Jewish Hospital,38.635143,-90.263975,88.38,121.36,104.87,32.98,225,155,,,,
+name,lat,lon,left,right,azimuth,fov,ptz,range_m,elev_m,ground_m,render,url,page_url,notes
+SLU South Campus (Doisy),38.622317,-90.236445,282.5,107.5,15,185,1,,177,164,,,,PTZ with 4 scheduled positions; cone is the full sweep envelope per user
+MO DNR Pollution Cam (St. Marys),38.633197,-90.310478,87.16,114.8,100.98,27.64,,,207,180,,,,
+Airport Cam (163-05-01),38.732399,-90.346729,303.4,313.61,308.51,10.21,,,222,183,,,,
+100 Above the Park (163-03-01),38.6428,-90.2648,100,6,233,266,1,,263,151,,,,PTZ that pans rarely; cone is the observed sweep envelope per user
+Chesterfield (163-01-01),38.6523,-90.5608,,,,,1,,240,199,,,,360 PTZ atop Drury hotel; azimuth coverage unknown - pin only
+Edwardsville IL (163-07-01),38.811597,-89.955851,245,335,290,90,,,174,165,,,,
+Arnold MO (163-08-01),38.4442,-90.3777,192,212,202,20,,,182,159,,,,Pointed at Arnold city water tower
+MoBot Garden (163-02-01),38.613974,-90.25732,262.2,290.2,276.2,28,,,,,,,,Elevations TBD
+WWT Raceway (163-04-01),38.6511,-90.1365,237.51,251.59,244.55,14.08,,,158,129,,,,Coords ESTIMATED by Claude at WWT Raceway grandstand from user geoguess; user extents+elevations; verify position
+Arch Park East View,38.6245,-90.1845,57.67,169.49,113.58,111.82,,,326,136,,,,Atop Gateway Arch; pin offset E of true position to declutter from West view
+Arch Park West View,38.6247,-90.1852,233.89,341.56,287.73,107.67,,,326,136,,,,Atop Gateway Arch; pin offset W of true position to declutter from East view
+EarthCam Arch Riverview,38.622414,-90.175545,265.76,304.89,285.33,39.13,,,138,126,,,,Malcolm Martin Memorial Park side; render=link so pin opens link-out
+KMOV Barnes-Jewish Hospital,38.635143,-90.263975,88.38,121.36,104.87,32.98,,,225,155,,,,

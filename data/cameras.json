@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-12T07:49:22Z",
+  "generated": "2026-07-13T03:27:41Z",
   "views": [
     {
       "key": "streams",
@@ -25,7 +25,8 @@
         "azimuth": 15.0,
         "fov": 185.0,
         "elev_m": 177.0,
-        "ground_m": 164.0
+        "ground_m": 164.0,
+        "ptz": true
       }
     },
     {
@@ -76,7 +77,8 @@
         "azimuth": 233.0,
         "fov": 266.0,
         "elev_m": 263.0,
-        "ground_m": 151.0
+        "ground_m": 151.0,
+        "ptz": true
       }
     },
     {
@@ -100,7 +102,8 @@
         "lat": 38.6523,
         "lon": -90.5608,
         "elev_m": 240.0,
-        "ground_m": 199.0
+        "ground_m": 199.0,
+        "ptz": true
       }
     },
     {

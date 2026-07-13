@@ -15,8 +15,9 @@ render column -> output render + primary url:
     skip                        -> excluded entirely
 
 Geo / map (data/locations.csv, optional):
-    columns: name,lat,lon,left,right,azimuth,fov,elev_m,ground_m,
-             render,url,page_url,notes
+    columns: name,lat,lon,left,right,azimuth,fov,ptz,range_m,elev_m,ground_m,
+             render,url,page_url,notes  (ptz=truthy flags a panning camera;
+             range_m overrides the default cone length)
     A row whose `name` matches a camera attaches a `geo` block to it, so it
     appears on the Map view. A row whose `name` matches nothing but has
     render+url becomes a standalone map-only marker (view "map").
@@ -113,6 +114,12 @@ def parse_geo(r):
         geo["elev_m"] = elev
     if ground is not None:
         geo["ground_m"] = ground
+
+    if str(r.get("ptz") or "").strip().lower() in ("1", "true", "yes", "y", "x"):
+        geo["ptz"] = True
+    rng = _num(r.get("range_m"))          # per-camera cone length; app falls back
+    if rng is not None:                    # to a default when absent
+        geo["range_m"] = rng
     return geo
 
 
