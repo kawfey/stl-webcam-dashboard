@@ -1,5 +1,7 @@
 # STL Webcams
 
+Disclaimer: I don't know how to code literally anything. Clankers made everything you see with my instructions. 
+
 A single-page dashboard of live St. Louis–area webcams — live streams and
 periodically-refreshed still cameras. **No build step, no backend:** it's plain
 HTML/CSS/JS that reads a generated `data/cameras.json` in the browser, so it
