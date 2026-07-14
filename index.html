@@ -24,14 +24,17 @@
   </header>
 
   <main>
+    <div class="filters" id="filters" role="group" aria-label="Filters" hidden></div>
     <div class="grid" id="grid" aria-live="polite"></div>
-    <p class="empty" id="empty" hidden>No cameras in this view.</p>
+    <p class="empty" id="empty" hidden>No cameras match these filters.</p>
   </main>
 
   <footer class="footer">
     <span id="footer-count"></span>
     <span class="sep">·</span>
     <a href="https://github.com/kawfey/stl-webcam-dashboard" rel="noopener">source</a>
+    <span class="sep" id="version-sep" hidden>·</span>
+    <span id="footer-version"></span>
   </footer>
 
   <script src="vendor/hls.min.js"></script>

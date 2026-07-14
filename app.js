@@ -12,6 +12,7 @@ const WETMET_REFRESH_MS = 285000; // wetmet feeds stall to black at ~300s;
 const FOV_RADIUS_M = 1600;    // illustrative length of the FOV wedge (these are
                               // elevated, long-range cams); visible at metro zoom
 const MAP_KEY = 'map';
+const CAMERAS_KEY = 'cameras';
 
 const state = {
   data: null,
@@ -19,6 +20,7 @@ const state = {
   gridSink: null,   // media resources for the active grid view
   modalSink: null,  // media resources for the open lightbox
   map: null,        // Leaflet instance for the Map view
+  filters: { type: 'all', status: 'all' }, // Cameras-view filters (#4)
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -49,7 +51,8 @@ async function boot() {
   }
 
   buildTabs();
-  selectView(state.data.views[0].key);
+  buildFilterBar();
+  selectView(CAMERAS_KEY);
   updateMeta();
   startClock();
   window.addEventListener('keydown', (e) => {
@@ -71,16 +74,11 @@ function startClock() {
 }
 
 const geoCameras = () => state.data.cameras.filter((c) => c.geo);
-const countForView = (key) =>
-  state.data.cameras.filter((c) => c.view === key).length;
 
 function buildTabs() {
   const tabs = $('#tabs');
   tabs.innerHTML = '';
-  const entries = state.data.views.map((v) => ({
-    key: v.key,
-    label: `${v.title} (${countForView(v.key)})`,
-  }));
+  const entries = [{ key: CAMERAS_KEY, label: `Cameras (${state.data.cameras.length})` }];
   if (geoCameras().length) {
     entries.push({ key: MAP_KEY, label: `Map (${geoCameras().length})` });
   }
@@ -104,8 +102,79 @@ function selectView(key) {
     btn.setAttribute('aria-selected', String(btn.dataset.view === key));
   }
   teardownView();
+  $('#filters').hidden = key !== CAMERAS_KEY;
   if (key === MAP_KEY) renderMap();
-  else renderGrid(key);
+  else renderCameras();
+}
+
+/* ---------- camera classification + filters (#4) ---------- */
+
+const TYPE_LABEL = { stream: 'Stream', still: 'Still', event: 'Event', external: 'External' };
+
+function camType(cam) {
+  if (cam.status === 'event_only') return 'event';
+  if (cam.render === 'link') return 'external';
+  if (cam.render === 'image') return 'still';
+  return 'stream'; // hls / iframe (a live stream, online or offline)
+}
+
+const camOnline = (cam) => cam.status !== 'offline' && cam.status !== 'dead';
+
+function matchesFilters(cam) {
+  const f = state.filters;
+  if (f.type !== 'all' && camType(cam) !== f.type) return false;
+  if (f.status === 'online' && !camOnline(cam)) return false;
+  if (f.status === 'offline' && camOnline(cam)) return false;
+  return true;
+}
+
+function buildFilterBar() {
+  const bar = $('#filters');
+  bar.innerHTML = '';
+  const group = (label, name, opts) => {
+    const g = document.createElement('div');
+    g.className = 'filter-group';
+    const lbl = document.createElement('span');
+    lbl.className = 'filter-label';
+    lbl.textContent = label;
+    g.appendChild(lbl);
+    for (const [val, text] of opts) {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'chip';
+      chip.dataset.name = name;
+      chip.dataset.val = val;
+      chip.textContent = text;
+      chip.setAttribute('aria-pressed', String(state.filters[name] === val));
+      chip.addEventListener('click', () => {
+        state.filters[name] = val;
+        for (const c of bar.querySelectorAll(`.chip[data-name="${name}"]`)) {
+          c.setAttribute('aria-pressed', String(c.dataset.val === val));
+        }
+        renderCameras();
+      });
+      g.appendChild(chip);
+    }
+    bar.appendChild(g);
+  };
+  group('Type', 'type', [
+    ['all', 'All'], ['stream', 'Stream'], ['still', 'Still'],
+    ['event', 'Event'], ['external', 'External'],
+  ]);
+  group('Status', 'status', [['all', 'All'], ['online', 'Online'], ['offline', 'Offline']]);
+}
+
+/* ---------- Cameras view (all streams + stills, one page) ---------- */
+
+function renderCameras() {
+  destroySink(state.gridSink);
+  const grid = $('#grid');
+  grid.innerHTML = '';
+  const sink = newSink();
+  state.gridSink = sink;
+  const cams = state.data.cameras.filter(matchesFilters);
+  $('#empty').hidden = cams.length > 0;
+  for (const cam of cams) grid.appendChild(buildCard(cam, sink, { lazyHls: true }));
 }
 
 function teardownView() {
@@ -147,15 +216,19 @@ function buildCard(cam, sink, opts = {}) {
     open.addEventListener('click', () => openModal(cam));
     media.appendChild(open);
   }
-  card.appendChild(buildBody(cam));
+  card.appendChild(buildBody(cam, sink));
   return card;
 }
 
 const isDacast = (cam) => /dacast\.com/.test(cam.url);
 
-function buildBody(cam) {
+function buildBody(cam, sink) {
   const body = document.createElement('div');
   body.className = 'card-body';
+
+  // Row 1: title + enlarge button.
+  const top = document.createElement('div');
+  top.className = 'card-top';
   const title = document.createElement('div');
   title.className = 'card-title';
   title.title = cam.name;
@@ -169,15 +242,7 @@ function buildBody(cam) {
   } else {
     title.textContent = cam.name;
   }
-  body.appendChild(title);
-  if (cam.status && cam.status !== 'live') {
-    const badge = document.createElement('span');
-    badge.className = `badge ${cam.status}`;
-    badge.textContent = cam.status.replace('_', ' ');
-    body.appendChild(badge);
-  }
-  // Explicit enlarge control on every embeddable card — the reliable way to
-  // open the lightbox, and the only way for the Dacast cams (see buildCard).
+  top.appendChild(title);
   if (cam.render !== 'link') {
     const enlarge = document.createElement('button');
     enlarge.type = 'button';
@@ -187,9 +252,75 @@ function buildBody(cam) {
     enlarge.innerHTML =
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>';
     enlarge.addEventListener('click', () => openModal(cam));
-    body.appendChild(enlarge);
+    top.appendChild(enlarge);
   }
+  body.appendChild(top);
+
+  // Row 2 (caption): type tag + uptime/downtime timer. (#4, #6)
+  const caption = document.createElement('div');
+  caption.className = 'card-caption';
+  const type = camType(cam);
+  const tag = document.createElement('span');
+  tag.className = `type-tag type-${type}`;
+  tag.textContent = TYPE_LABEL[type];
+  caption.appendChild(tag);
+  const timer = document.createElement('span');
+  timer.className = 'card-uptime';
+  caption.appendChild(timer);
+  startUptime(timer, cam, sink);
+  body.appendChild(caption);
+
   return body;
+}
+
+/* ---------- observed uptime/downtime, persisted per-browser (#6) ----------
+   No server exists, so "uptime" = time this browser has continuously observed
+   the camera online since first sight (stored in localStorage; survives
+   reloads/redeploys). Offline cams show downtime since the last time this
+   browser saw them online, or "forever" if never. */
+const UPTIME_STORE_KEY = 'stl-webcams:seen';
+
+function loadSeen() {
+  try { return JSON.parse(localStorage.getItem(UPTIME_STORE_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveSeen(store) {
+  try { localStorage.setItem(UPTIME_STORE_KEY, JSON.stringify(store)); } catch { /* private mode */ }
+}
+
+function fmtDuration(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
+  if (d) return `${d}d ${h}h`;
+  if (h) return `${h}h ${m}m`;
+  if (m) return `${m}m`;
+  return `${s}s`;
+}
+
+function startUptime(el, cam, sink) {
+  const online = camOnline(cam);
+  const store = loadSeen();
+  const rec = store[cam.name] || {};
+  if (online) {
+    if (!rec.firstOnline) rec.firstOnline = Date.now();
+    rec.lastOnline = Date.now();
+  }
+  store[cam.name] = rec;
+  saveSeen(store);
+
+  const render = () => {
+    if (online) {
+      el.className = 'card-uptime up';
+      el.textContent = `up ${fmtDuration(Date.now() - rec.firstOnline)}`;
+    } else {
+      el.className = 'card-uptime down';
+      el.textContent = rec.lastOnline
+        ? `offline ${fmtDuration(Date.now() - rec.lastOnline)}`
+        : 'offline · forever';
+    }
+  };
+  render();
+  sink.timers.push(setInterval(render, 30000));
 }
 
 /* ---------- media mounting (shared by grid + lightbox) ---------- */
@@ -496,6 +627,11 @@ function updateMeta() {
     $('#meta').textContent = `data updated ${new Date(g).toLocaleDateString()}`;
   }
   $('#footer-count').textContent = `${state.data.cameras.length} cameras`;
+  const v = state.data.version;
+  if (v && v.commit) {
+    $('#footer-version').textContent = `${v.branch} @ ${v.commit}`;
+    $('#version-sep').hidden = false;
+  }
 }
 
 boot();
