@@ -140,10 +140,32 @@ function camOnline(cam) {
    from the browser can read the status. No token, no backend, no CI.
    Cameras without a probe_url (Dacast/Nest/stills) keep their static status. */
 
+function setLive(cam, online) {
+  state.live[cam.name] = { online, at: Date.now() };
+}
+
+// Stills hosts send no CORS headers, so fetch() can't read their status — but
+// an <img> loads cross-origin fine, and its load/error is the same question we
+// were going to ask. Empirically these hosts 404 a dead camera rather than
+// serving a stale frame, so this is a real signal. (Caveat: a camera that
+// froze while still serving a valid old frame is undetectable from the
+// browser — reading last-modified or pixels both need CORS.)
+const probeImageUrl = (url) => new Promise((resolve) => {
+  const img = new Image();
+  img.onload = () => resolve(true);
+  img.onerror = () => resolve(false);
+  const sep = url.includes('?') ? '&' : '?';
+  img.src = `${url}${sep}_probe=${Date.now()}`;
+});
+
 async function probeCamera(cam) {
   try {
-    const res = await fetch(cam.probe_url, { method: 'HEAD', cache: 'no-store' });
-    state.live[cam.name] = { online: res.status !== 404, at: Date.now() };
+    if (cam.probe_url) {
+      const res = await fetch(cam.probe_url, { method: 'HEAD', cache: 'no-store' });
+      setLive(cam, res.status !== 404);
+    } else if (cam.render === 'image') {
+      setLive(cam, await probeImageUrl(cam.url));
+    }
   } catch {
     // Network/CORS failure tells us nothing about the camera — leave the last
     // known result (or the static status) rather than crying offline.
@@ -151,7 +173,13 @@ async function probeCamera(cam) {
 }
 
 async function probeAll() {
-  const cams = state.data.cameras.filter((c) => c.probe_url);
+  const cams = state.data.cameras.filter((c) => {
+    if (c.probe_url) return true;                  // wetmet: cheap HEAD, always
+    // Stills: a rendered <img> self-reports for free on every 20s refresh, so
+    // only probe the ones we've never heard from (e.g. never scrolled into
+    // view) rather than re-downloading every JPEG each cycle.
+    return c.render === 'image' && !state.live[c.name];
+  });
   if (!cams.length) return;
   await Promise.all(cams.map(probeCamera));
   refreshLiveUi();
@@ -160,11 +188,12 @@ async function probeAll() {
 // Update dots/uptime in place. Deliberately NOT a re-render: rebuilding the
 // grid would tear down and reload every iframe.
 function refreshLiveUi() {
+  const byName = new Map(state.data.cameras.map((c) => [c.name, c]));
   for (const el of document.querySelectorAll('[data-cam]')) {
-    const cam = state.data.cameras.find((c) => c.name === el.dataset.cam);
+    const cam = byName.get(el.dataset.cam);
     if (!cam) continue;
     if (el.classList.contains('status-dot')) applyDot(el, cam);
-    if (el.classList.contains('card-uptime')) el.__render && el.__render();
+    else if (el.classList.contains('card-uptime')) el.__render && el.__render();
   }
 }
 
@@ -413,6 +442,9 @@ function mountImage(media, cam, sink) {
     const sep = cam.url.includes('?') ? '&' : '?';
     img.src = `${cam.url}${sep}_t=${Date.now()}`;
   };
+  // Every refresh doubles as a liveness check, for free. (#17)
+  img.addEventListener('load', () => { setLive(cam, true); refreshLiveUi(); });
+  img.addEventListener('error', () => { setLive(cam, false); refreshLiveUi(); });
   load();
   media.appendChild(img);
   const timer = setInterval(() => {

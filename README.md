@@ -62,11 +62,21 @@ excluded from the app entirely.
 
 ### Live status (`probe_url`)
 
-Optional. If a camera has a `probe_url`, the browser HEAD-probes it on load and
-every 2 minutes: **404 → offline, anything else → online**. The live result
-overrides the static `status` column and drives the status dot, the
-Online/Offline filter, the uptime timer, and the map pin colour. Cameras
-without one just use `status` from the CSV.
+Cameras are liveness-checked in the browser on load and every 2 minutes. The
+live result overrides the static `status` column and drives the status dot, the
+Online/Offline filter, the uptime timer, and the map pin colour. Two mechanisms:
+
+- **`probe_url`** (optional column) — HEAD-probed: **404 → offline, anything
+  else → online**. Used by the wetmet cams.
+- **Stills** need no column: their `<img>` already loads every 20 s, so its
+  `load`/`error` *is* the check, for free. These hosts send no CORS headers, so
+  `fetch()` can't read their status — but an `<img>` loads cross-origin fine.
+  (Caveat: a camera frozen while still serving a valid old frame is
+  undetectable from the browser — reading `last-modified` or pixels both need
+  CORS. In practice these hosts 404 a dead camera rather than serving a stale
+  frame.)
+
+Cameras with neither (Dacast/Nest) just use `status` from the CSV.
 
 The wetmet cams use their *unsigned* playlist URL, e.g.
 `https://wmso-us-ea1.wetmet.net/live/163-05-01/playlist.m3u8`. wetmet's stream
