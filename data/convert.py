@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Convert cameras.csv (+ optional locations.csv) into cameras.json.
+"""Convert cameras.csv into cameras.json.
 
 Analogous to the Home Assistant gen_dashboard.py. Reads data/cameras.csv,
 writes data/cameras.json. stdlib-only, idempotent. Run from the repo root:
 
     python3 data/convert.py
+
+columns: name,page_url,stream_url,type,status,source,render,view,
+         lat,lon,left,right,azimuth,fov,ptz,range_m,elev_m,ground_m,notes
 
 render column -> output render + primary url:
     entity:* + type still_image -> image  (url = stream_url)
@@ -14,17 +17,14 @@ render column -> output render + primary url:
     link                        -> link   (url = page_url)
     skip                        -> excluded entirely
 
-Geo / map (data/locations.csv, optional):
-    columns: name,lat,lon,left,right,azimuth,fov,ptz,range_m,elev_m,ground_m,
-             render,url,page_url,notes  (ptz=truthy flags a panning camera;
-             range_m overrides the default cone length)
-    A row whose `name` matches a camera attaches a `geo` block to it, so it
-    appears on the Map view. A row whose `name` matches nothing but has
-    render+url becomes a standalone map-only marker (view "map").
-    Direction is optional: give left/right FOV-edge headings (preferred) or
-    azimuth/fov directly; with either present the app draws an FOV wedge,
-    otherwise a plain pin. See parse_geo for the left/right -> azimuth/fov
-    math and the elev_m/ground_m (viewshed) fields.
+Geo / map: lat/lon (+ optionally left/right or azimuth/fov, ptz, range_m,
+elev_m, ground_m) are all optional per row. A row with lat/lon attaches a
+`geo` block, so the camera appears on the Map view. Direction is optional:
+give left/right FOV-edge headings (preferred) or azimuth/fov directly; with
+either present the app draws an FOV wedge, otherwise a plain pin. ptz=truthy
+flags a panning camera; range_m overrides the default cone length. See
+parse_geo for the left/right -> azimuth/fov math and the elev_m/ground_m
+(viewshed) fields.
 """
 import csv, json, os, subprocess, sys
 from datetime import datetime, timezone
@@ -81,7 +81,7 @@ def map_row(r):
               file=sys.stderr)
         return None
 
-    return {
+    cam = {
         "name": r["name"].strip(),
         "view": r["view"].strip(),
         "render": out_render,
@@ -90,6 +90,10 @@ def map_row(r):
         "status": r["status"].strip(),
         "notes": r["notes"].strip(),
     }
+    geo = parse_geo(r)
+    if geo is not None:
+        cam["geo"] = geo
+    return cam
 
 
 def _num(s):
@@ -99,7 +103,7 @@ def _num(s):
 
 
 def parse_geo(r):
-    """Return a geo dict from a locations.csv row, or None if lat/lon missing.
+    """Return a geo dict from a cameras.csv row, or None if lat/lon missing.
 
     Direction may be given two ways:
       * left/right  -- compass headings of the FOV's left and right edges;
@@ -141,51 +145,9 @@ def parse_geo(r):
     return geo
 
 
-def apply_locations(cameras, path):
-    """Attach geo to matching cameras by name; append standalone map markers."""
-    if not os.path.exists(path):
-        return 0, 0
-    by_name = {c["name"]: c for c in cameras}
-    with open(path, encoding="utf-8", newline="") as f:
-        rows = list(csv.DictReader(f))
-
-    attached, standalone = 0, 0
-    for r in rows:
-        name = (r.get("name") or "").strip()
-        geo = parse_geo(r)
-        if geo is None:
-            print(f"warning: location row {name!r} missing lat/lon; skipping",
-                  file=sys.stderr)
-            continue
-        if name in by_name:
-            by_name[name]["geo"] = geo
-            attached += 1
-            continue
-        # No matching camera: needs render+url to be a clickable marker.
-        render = (r.get("render") or "").strip()
-        url = (r.get("url") or "").strip()
-        if not (render and url):
-            print(f"warning: location {name!r} matches no camera and has no "
-                  f"render+url; skipping", file=sys.stderr)
-            continue
-        cameras.append({
-            "name": name,
-            "view": "map",  # map-only: never appears in Streams/Stills tabs
-            "render": render,
-            "url": url,
-            "page_url": (r.get("page_url") or "").strip(),
-            "status": "live",
-            "notes": (r.get("notes") or "").strip(),
-            "geo": geo,
-        })
-        standalone += 1
-    return attached, standalone
-
-
 def main():
     here = os.path.dirname(os.path.abspath(__file__))
     src = os.path.join(here, "cameras.csv")
-    locs = os.path.join(here, "locations.csv")
     dst = os.path.join(here, "cameras.json")
 
     with open(src, encoding="utf-8", newline="") as f:
@@ -202,7 +164,6 @@ def main():
                   file=sys.stderr)
         cameras.append(cam)
 
-    attached, standalone = apply_locations(cameras, locs)
     geo_count = sum(1 for c in cameras if "geo" in c)
 
     data = {
@@ -223,7 +184,7 @@ def main():
     print(f"total cameras: {len(cameras)}  skipped rows: {skipped}")
     for render in ("image", "hls", "iframe", "link"):
         print(f"  {render}: {counts.get(render, 0)}")
-    print(f"geo: {geo_count} on map ({attached} attached, {standalone} standalone)")
+    print(f"geo: {geo_count} on map")
 
 
 if __name__ == "__main__":
