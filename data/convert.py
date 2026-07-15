@@ -7,7 +7,7 @@ writes data/cameras.json. stdlib-only, idempotent. Run from the repo root:
     python3 data/convert.py
 
 columns: name,page_url,stream_url,type,status,source,render,view,
-         lat,lon,left,right,azimuth,fov,ptz,range_m,elev_m,ground_m,notes
+         lat,lon,left,right,azimuth,fov,ptz,range_m,elev_m,ground_m,notes,owner
 
 render column -> output render + primary url:
     entity:* + type still_image -> image  (url = stream_url)
@@ -90,6 +90,9 @@ def map_row(r):
         "status": r["status"].strip(),
         "notes": r["notes"].strip(),
     }
+    owner = r.get("owner", "").strip()
+    if owner:
+        cam["owner"] = owner
     geo = parse_geo(r)
     if geo is not None:
         cam["geo"] = geo

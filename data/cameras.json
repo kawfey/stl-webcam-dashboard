@@ -1,8 +1,8 @@
 {
-  "generated": "2026-07-15T03:07:58Z",
+  "generated": "2026-07-15T03:51:25Z",
   "version": {
-    "branch": "merge-camera-csv",
-    "commit": "6c64846"
+    "branch": "add-camera-owner-column",
+    "commit": "7a010b5"
   },
   "views": [
     {
@@ -58,6 +58,7 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=a566f17e5b69e098457b8590d26e1087",
       "status": "live",
       "notes": "Signed HLS (30-min wmsAuthSign); iframe frame.php directly",
+      "owner": "KSDK",
       "geo": {
         "lat": 38.732399,
         "lon": -90.346729,
@@ -75,6 +76,7 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=03224dc411fe7e5ffd2d81eb5fe689dd",
       "status": "live",
       "notes": "KSDK Forest Park cam embeds this same uid | PTZ that pans rarely; cone is the observed sweep envelope per user",
+      "owner": "KSDK",
       "geo": {
         "lat": 38.6428,
         "lon": -90.2648,
@@ -86,13 +88,14 @@
       }
     },
     {
-      "name": "Aerie's Resort in Grafton, Illinois (163-09-01)",
+      "name": "Aerie's Resort in Grafton IL (163-09-01)",
       "view": "streams",
       "render": "iframe",
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8135044461c6e7f62579fbf28ee5f3ce",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8135044461c6e7f62579fbf28ee5f3ce",
       "status": "live",
-      "notes": ""
+      "notes": "",
+      "owner": "KSDK"
     },
     {
       "name": "Chesterfield (163-01-01)",
@@ -102,6 +105,7 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=2dc3c001ceec9118998247266e6af1f3",
       "status": "live",
       "notes": "360 PTZ atop Drury hotel; azimuth coverage unknown - pin only",
+      "owner": "KSDK",
       "geo": {
         "lat": 38.6523,
         "lon": -90.5608,
@@ -118,6 +122,7 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=edf873d727f0630023fb76f435cf763c",
       "status": "live",
       "notes": "",
+      "owner": "KSDK",
       "geo": {
         "lat": 38.811597,
         "lon": -89.955851,
@@ -135,6 +140,7 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=bc34ef3137c34fe22a66fb2cb83a6688",
       "status": "live",
       "notes": "Pointed at Arnold city water tower",
+      "owner": "KSDK",
       "geo": {
         "lat": 38.4442,
         "lon": -90.3777,
@@ -151,7 +157,8 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=97a6631c2321bfd296cbf3febeea8321",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=97a6631c2321bfd296cbf3febeea8321",
       "status": "live",
-      "notes": ""
+      "notes": "",
+      "owner": "KSDK"
     },
     {
       "name": "MoBot Garden (163-02-01)",
@@ -161,6 +168,7 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442",
       "status": "live",
       "notes": "Elevations TBD",
+      "owner": "KSDK",
       "geo": {
         "lat": 38.613974,
         "lon": -90.25732,
@@ -175,7 +183,8 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8cc1236564fc71dd121f03d1a3178a7b",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8cc1236564fc71dd121f03d1a3178a7b",
       "status": "live",
-      "notes": ""
+      "notes": "",
+      "owner": "KSDK"
     },
     {
       "name": "WWT Raceway (163-04-01)",
@@ -185,6 +194,7 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=427e8434470c40b803903f7db97b04e9",
       "status": "live",
       "notes": "KSDK labeled this St. Charles but feed shows WWT Raceway per user geoguess 2026-07-12. Dropped from KSDK index page as of 2026-07 but frame still live | Coords ESTIMATED by Claude at WWT Raceway grandstand from user geoguess; user extents+elevations; verify position",
+      "owner": "KSDK",
       "geo": {
         "lat": 38.6511,
         "lon": -90.1365,
@@ -201,7 +211,8 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=a4ceba0667cc516e264eece0caa0b508",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=a4ceba0667cc516e264eece0caa0b508",
       "status": "live",
-      "notes": ""
+      "notes": "",
+      "owner": "KSDK"
     },
     {
       "name": "Arch Park East View",
@@ -306,16 +317,18 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=135e4f36feff282afcc00a1abdd58fb7",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=135e4f36feff282afcc00a1abdd58fb7",
       "status": "live",
-      "notes": "Found on ksdk.com/weather-cameras 2026-07; signed HLS"
+      "notes": "Found on ksdk.com/weather-cameras 2026-07; signed HLS",
+      "owner": "KSDK"
     },
     {
-      "name": "KMOV Barnes-Jewish Hospital",
+      "name": "Barnes-Jewish Hospital",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/Barnes%20East.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
       "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV",
       "geo": {
         "lat": 38.635143,
         "lon": -90.263975,
@@ -326,157 +339,174 @@
       }
     },
     {
-      "name": "KMOV 360 Hilton Ballpark East",
+      "name": "360 Hilton Ballpark East",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/360hilton.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Westport",
+      "name": "Westport",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/westport.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV St. Louis Children's Hospital",
+      "name": "St. Louis Children's Hospital",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/cwe_childrens.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Alton Memorial Hospital",
+      "name": "Alton Memorial Hospital",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/Alton%20Memorial_Full.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Lambert Airport",
+      "name": "Lambert Airport",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/airport.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Shiloh Memorial",
+      "name": "Shiloh Memorial",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/Shiloh_Memorial_Shiloh.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV 360 Hilton Ballpark West",
+      "name": "360 Hilton Ballpark West",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/360whilton.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Barnes-Jewish Siteman South County",
+      "name": "Barnes-Jewish Siteman South County",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/South%20County.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Missouri Baptist Sullivan",
+      "name": "Missouri Baptist Sullivan",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/Sullivan.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Barnes-Jewish St. Peters",
+      "name": "Barnes-Jewish St. Peters",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/St_Peters.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Missouri Baptist Medical Center",
+      "name": "Missouri Baptist Medical Center",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/Mo%20Bapt.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Eureka",
+      "name": "Eureka",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/eureka.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Christian Hospital Spanish Lake",
+      "name": "Christian Hospital Spanish Lake",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/North%20County_Spanish%20Lake.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Progress West Hospital OFallon",
+      "name": "Progress West Hospital OFallon",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/Ofallon_Progress_West.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV One Cardinal Way",
+      "name": "One Cardinal Way",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/WEB%20CTR%20One%20Cardinal%20Way.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV Parkland Health Farmington",
+      "name": "Parkland Health Farmington",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/Farmington_Parkland%20Health.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     },
     {
-      "name": "KMOV SIU Edwardsville Campus",
+      "name": "SIU Edwardsville Campus",
       "view": "stills",
       "render": "image",
       "url": "https://webpubcontent.gray.tv/kmov/weather/SIU%20Edwardsville.jpg",
       "page_url": "https://www.firstalert4.com/weather/cams/",
       "status": "live",
-      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes"
+      "notes": "Ford Skycam Network JPEG; updated in place; refresh cadence ~minutes",
+      "owner": "KMOV"
     }
   ]
 }
