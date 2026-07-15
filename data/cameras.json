@@ -86,7 +86,7 @@
       }
     },
     {
-      "name": "Belleville Square (163-09-01)",
+      "name": "Aerie's Resort in Grafton, Illinois (163-09-01)",
       "view": "streams",
       "render": "iframe",
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8135044461c6e7f62579fbf28ee5f3ce",
