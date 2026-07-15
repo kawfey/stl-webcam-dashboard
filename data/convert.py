@@ -7,7 +7,8 @@ writes data/cameras.json. stdlib-only, idempotent. Run from the repo root:
     python3 data/convert.py
 
 columns: name,page_url,stream_url,type,status,source,render,view,
-         lat,lon,left,right,azimuth,fov,ptz,range_m,elev_m,ground_m,notes,owner
+         lat,lon,left,right,azimuth,fov,ptz,range_m,elev_m,ground_m,notes,owner,
+         probe_url
 
 render column -> output render + primary url:
     entity:* + type still_image -> image  (url = stream_url)
@@ -93,6 +94,12 @@ def map_row(r):
     owner = r.get("owner", "").strip()
     if owner:
         cam["owner"] = owner
+    # Optional liveness endpoint. The app HEAD-probes it and treats 404 as
+    # offline, anything else as online (wetmet answers 403 for a stream that
+    # exists but wants its wmsAuthSign token, 404 when the camera is down).
+    probe_url = r.get("probe_url", "").strip()
+    if probe_url:
+        cam["probe_url"] = probe_url
     geo = parse_geo(r)
     if geo is not None:
         cam["geo"] = geo
