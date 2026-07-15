@@ -1,8 +1,8 @@
 {
-  "generated": "2026-07-14T14:46:53Z",
+  "generated": "2026-07-15T03:07:58Z",
   "version": {
-    "branch": "unified-camera-view",
-    "commit": "3da74df"
+    "branch": "merge-camera-csv",
+    "commit": "6c64846"
   },
   "views": [
     {
@@ -22,7 +22,7 @@
       "url": "https://cs5.pixelcaster.com/live/slu-caroline.stream/playlist.m3u8",
       "page_url": "https://www.slu.edu/webcam/doisy-research-center-view.php",
       "status": "live",
-      "notes": "Pixelcaster HLS; unauthenticated; verified. Sibling SLU cams exist (Clock Tower/Quad/BSC/Sports Complex)",
+      "notes": "Pixelcaster HLS; unauthenticated; verified. Sibling SLU cams exist (Clock Tower/Quad/BSC/Sports Complex) | PTZ with 4 scheduled positions; cone is the full sweep envelope per user",
       "geo": {
         "lat": 38.622317,
         "lon": -90.236445,
@@ -74,7 +74,7 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=03224dc411fe7e5ffd2d81eb5fe689dd",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=03224dc411fe7e5ffd2d81eb5fe689dd",
       "status": "live",
-      "notes": "KSDK Forest Park cam embeds this same uid",
+      "notes": "KSDK Forest Park cam embeds this same uid | PTZ that pans rarely; cone is the observed sweep envelope per user",
       "geo": {
         "lat": 38.6428,
         "lon": -90.2648,
@@ -101,7 +101,7 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=2dc3c001ceec9118998247266e6af1f3",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=2dc3c001ceec9118998247266e6af1f3",
       "status": "live",
-      "notes": "",
+      "notes": "360 PTZ atop Drury hotel; azimuth coverage unknown - pin only",
       "geo": {
         "lat": 38.6523,
         "lon": -90.5608,
@@ -134,7 +134,7 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=bc34ef3137c34fe22a66fb2cb83a6688",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=bc34ef3137c34fe22a66fb2cb83a6688",
       "status": "live",
-      "notes": "",
+      "notes": "Pointed at Arnold city water tower",
       "geo": {
         "lat": 38.4442,
         "lon": -90.3777,
@@ -160,7 +160,7 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=5718829f71b02996ff269b4c59687442",
       "status": "live",
-      "notes": "",
+      "notes": "Elevations TBD",
       "geo": {
         "lat": 38.613974,
         "lon": -90.25732,
@@ -184,7 +184,7 @@
       "url": "https://api.wetmet.net/widgets/stream/frame.php?uid=427e8434470c40b803903f7db97b04e9",
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=427e8434470c40b803903f7db97b04e9",
       "status": "live",
-      "notes": "KSDK labeled this St. Charles but feed shows WWT Raceway per user geoguess 2026-07-12. Dropped from KSDK index page as of 2026-07 but frame still live",
+      "notes": "KSDK labeled this St. Charles but feed shows WWT Raceway per user geoguess 2026-07-12. Dropped from KSDK index page as of 2026-07 but frame still live | Coords ESTIMATED by Claude at WWT Raceway grandstand from user geoguess; user extents+elevations; verify position",
       "geo": {
         "lat": 38.6511,
         "lon": -90.1365,
@@ -210,7 +210,7 @@
       "url": "https://iframe.dacast.com/live/b44603d7-b221-fc91-5fa2-f9d35bf908f2/e263ea86-84e6-66eb-1b29-646a22389f14",
       "page_url": "https://www.archpark.org/visit/webcams",
       "status": "live",
-      "notes": "Dacast iframe extracted from archpark.org",
+      "notes": "Dacast iframe extracted from archpark.org | Atop Gateway Arch; pin offset E of true position to declutter from West view",
       "geo": {
         "lat": 38.6245,
         "lon": -90.1845,
@@ -227,7 +227,7 @@
       "url": "https://iframe.dacast.com/live/b44603d7-b221-fc91-5fa2-f9d35bf908f2/2c46c826-e173-5e74-db7f-ee319f0fb8a6",
       "page_url": "https://www.archpark.org/visit/webcams",
       "status": "live",
-      "notes": "Dacast iframe extracted from archpark.org",
+      "notes": "Dacast iframe extracted from archpark.org | Atop Gateway Arch; pin offset W of true position to declutter from East view",
       "geo": {
         "lat": 38.6247,
         "lon": -90.1852,
@@ -271,7 +271,7 @@
       "url": "https://www.earthcam.com/usa/missouri/stlouis/?cam=arch_riverview",
       "page_url": "https://www.earthcam.com/usa/missouri/stlouis/?cam=arch_riverview",
       "status": "live",
-      "notes": "Signed expiring HLS + frame-busting; link-out per user",
+      "notes": "Signed expiring HLS + frame-busting; link-out per user | Malcolm Martin Memorial Park side; render=link so pin opens link-out",
       "geo": {
         "lat": 38.622414,
         "lon": -90.175545,
