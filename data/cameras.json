@@ -1,8 +1,8 @@
 {
-  "generated": "2026-07-15T03:51:25Z",
+  "generated": "2026-07-15T04:04:24Z",
   "version": {
-    "branch": "add-camera-owner-column",
-    "commit": "7a010b5"
+    "branch": "live-status-probe",
+    "commit": "47d6393"
   },
   "views": [
     {
@@ -59,6 +59,7 @@
       "status": "live",
       "notes": "Signed HLS (30-min wmsAuthSign); iframe frame.php directly",
       "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-05-01/playlist.m3u8",
       "geo": {
         "lat": 38.732399,
         "lon": -90.346729,
@@ -77,6 +78,7 @@
       "status": "live",
       "notes": "KSDK Forest Park cam embeds this same uid | PTZ that pans rarely; cone is the observed sweep envelope per user",
       "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-03-01/playlist.m3u8",
       "geo": {
         "lat": 38.6428,
         "lon": -90.2648,
@@ -95,7 +97,8 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8135044461c6e7f62579fbf28ee5f3ce",
       "status": "live",
       "notes": "",
-      "owner": "KSDK"
+      "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-09-01/playlist.m3u8"
     },
     {
       "name": "Chesterfield (163-01-01)",
@@ -106,6 +109,7 @@
       "status": "live",
       "notes": "360 PTZ atop Drury hotel; azimuth coverage unknown - pin only",
       "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-01-01/playlist.m3u8",
       "geo": {
         "lat": 38.6523,
         "lon": -90.5608,
@@ -123,6 +127,7 @@
       "status": "live",
       "notes": "",
       "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-07-01/playlist.m3u8",
       "geo": {
         "lat": 38.811597,
         "lon": -89.955851,
@@ -141,6 +146,7 @@
       "status": "live",
       "notes": "Pointed at Arnold city water tower",
       "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-08-01/playlist.m3u8",
       "geo": {
         "lat": 38.4442,
         "lon": -90.3777,
@@ -158,7 +164,8 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=97a6631c2321bfd296cbf3febeea8321",
       "status": "live",
       "notes": "",
-      "owner": "KSDK"
+      "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-06-01/playlist.m3u8"
     },
     {
       "name": "MoBot Garden (163-02-01)",
@@ -169,6 +176,7 @@
       "status": "live",
       "notes": "Elevations TBD",
       "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-02-01/playlist.m3u8",
       "geo": {
         "lat": 38.613974,
         "lon": -90.25732,
@@ -184,7 +192,8 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=8cc1236564fc71dd121f03d1a3178a7b",
       "status": "live",
       "notes": "",
-      "owner": "KSDK"
+      "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-10-01/playlist.m3u8"
     },
     {
       "name": "WWT Raceway (163-04-01)",
@@ -195,6 +204,7 @@
       "status": "live",
       "notes": "KSDK labeled this St. Charles but feed shows WWT Raceway per user geoguess 2026-07-12. Dropped from KSDK index page as of 2026-07 but frame still live | Coords ESTIMATED by Claude at WWT Raceway grandstand from user geoguess; user extents+elevations; verify position",
       "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-04-01/playlist.m3u8",
       "geo": {
         "lat": 38.6511,
         "lon": -90.1365,
@@ -212,7 +222,8 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=a4ceba0667cc516e264eece0caa0b508",
       "status": "live",
       "notes": "",
-      "owner": "KSDK"
+      "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-11-01/playlist.m3u8"
     },
     {
       "name": "Arch Park East View",
@@ -318,7 +329,8 @@
       "page_url": "https://api.wetmet.net/widgets/stream/frame.php?uid=135e4f36feff282afcc00a1abdd58fb7",
       "status": "live",
       "notes": "Found on ksdk.com/weather-cameras 2026-07; signed HLS",
-      "owner": "KSDK"
+      "owner": "KSDK",
+      "probe_url": "https://wmso-us-ea1.wetmet.net/live/163-12-01/playlist.m3u8"
     },
     {
       "name": "Barnes-Jewish Hospital",

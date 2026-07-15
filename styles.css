@@ -292,6 +292,25 @@ main { padding: 18px; }
 .type-still { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
 .type-event, .type-external { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
 
+/* live status dot (#17): green pulsing = up, amber = down */
+.status-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dead);
+}
+.status-dot.is-online {
+  background: var(--live);
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+.status-dot.is-offline { background: var(--warn); }
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 color-mix(in srgb, var(--live) 50%, transparent); }
+  50%      { opacity: 0.55; box-shadow: 0 0 0 4px color-mix(in srgb, var(--live) 0%, transparent); }
+}
+
 /* observed uptime / downtime */
 .card-uptime {
   flex: 1 1 auto;
