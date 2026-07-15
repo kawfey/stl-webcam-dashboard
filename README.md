@@ -40,35 +40,41 @@ in `vendor/` — no CDN dependency (map tiles come from OpenStreetMap at runtime
 Cameras that have a location show up on a **Map** tab as a pin plus a shaded
 field-of-view wedge; clicking a pin opens that camera's stream in a lightbox.
 
-Locations live in `data/locations.csv`, joined onto cameras **by name** so the
-map is decoupled from the HA-derived `cameras.csv`:
-
-```
-name,lat,lon,azimuth,fov,render,url,page_url,notes
-```
-
-- `azimuth` is a compass bearing (0°=N, 90°=E, clockwise); `fov` is the total
-  cone width, so the wedge spans `azimuth ± fov/2`.
-- A row whose `name` **matches a camera** just adds `lat,lon[,azimuth,fov]` and
-  the camera appears on the map. `render/url/page_url` can be left blank.
-- A row whose `name` **matches nothing** but has `render`+`url` becomes a
-  standalone map-only marker (handy for a test pin). It won't show in
-  Streams/Stills.
-- Omit `azimuth`/`fov` to drop a plain pin with no wedge.
-
-Re-run `python3 data/convert.py` after editing either CSV.
-
 ## Editing the camera list
 
-`data/cameras.csv` is the source of truth. To add or change a camera, edit a
-row, then regenerate the JSON:
+`data/cameras.csv` is the single source of truth — streams/stills config and
+map geo data live in the same row:
+
+```
+name,page_url,stream_url,type,status,source,render,view,
+lat,lon,left,right,azimuth,fov,ptz,range_m,elev_m,ground_m,notes
+```
+
+To add or change a camera, edit a row, then regenerate the JSON:
 
 ```
 python3 data/convert.py     # rewrites data/cameras.json
 ```
 
-Columns and `render`/`view` semantics are documented in `convert.py`. `skip`
-rows (dead cameras, index pages, non-video bookmarks) are excluded from the app.
+`render`/`view` semantics for the first 8 columns are documented in
+`convert.py`. `skip` rows (dead cameras, index pages, non-video bookmarks) are
+excluded from the app entirely.
+
+The geo columns (`lat` onward) are all optional — leave them blank for a
+camera with no map presence:
+
+- `azimuth` is a compass bearing (0°=N, 90°=E, clockwise); `fov` is the total
+  cone width, so the wedge spans `azimuth ± fov/2`. Give these directly, or
+  give `left`/`right` (the FOV's edge headings, sweeping clockwise
+  left→right) and `convert.py` derives azimuth/fov for you — `left`/`right`
+  win if both styles are present.
+- `ptz` (any truthy value) flags a panning camera.
+- `range_m` overrides the default FOV-wedge length for that camera.
+- `elev_m` (camera height ASL, including building/mount) and `ground_m`
+  (ground ASL at the camera's base) are carried through for a future
+  viewshed feature; unused by the map today.
+- With `lat`/`lon` but no azimuth/fov/left/right, the camera drops a plain
+  pin with no wedge.
 
 ## Deploy
 
