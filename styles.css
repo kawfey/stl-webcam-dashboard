@@ -136,6 +136,48 @@ html, body {
 /* ---- Grid ---- */
 main { padding: 18px; }
 
+/* ---- Filter bar (#4) ---- */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  max-width: 1600px;
+  margin: 0 auto 16px;
+}
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 2px;
+}
+.chip {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.chip:hover { color: var(--text); }
+.chip[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -217,11 +259,52 @@ main { padding: 18px; }
 }
 
 .card-body {
+  padding: 9px 12px 10px;
+}
+
+.card-top {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
 }
+
+.card-caption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+/* type tag (Stream / Still / Event / External) */
+.type-tag {
+  flex: none;
+  font-size: 10.5px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: var(--panel-2);
+  color: var(--muted);
+}
+.type-stream { color: var(--live); background: color-mix(in srgb, var(--live) 14%, transparent); }
+.type-still { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+.type-event, .type-external { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+/* observed uptime / downtime */
+.card-uptime {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-uptime.up::before { content: ''; }
+.card-uptime.down { color: var(--dead); }
 
 .card-title {
   flex: 1 1 auto;

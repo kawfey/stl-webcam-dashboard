@@ -1,5 +1,9 @@
 {
-  "generated": "2026-07-13T03:27:41Z",
+  "generated": "2026-07-14T14:46:53Z",
+  "version": {
+    "branch": "unified-camera-view",
+    "commit": "3da74df"
+  },
   "views": [
     {
       "key": "streams",
@@ -22,8 +26,8 @@
       "geo": {
         "lat": 38.622317,
         "lon": -90.236445,
-        "azimuth": 15.0,
-        "fov": 185.0,
+        "azimuth": 15,
+        "fov": 185,
         "elev_m": 177.0,
         "ground_m": 164.0,
         "ptz": true
@@ -40,8 +44,8 @@
       "geo": {
         "lat": 38.633197,
         "lon": -90.310478,
-        "azimuth": 100.98,
-        "fov": 27.64,
+        "azimuth": 101,
+        "fov": 28,
         "elev_m": 207.0,
         "ground_m": 180.0
       }
@@ -57,8 +61,8 @@
       "geo": {
         "lat": 38.732399,
         "lon": -90.346729,
-        "azimuth": 308.5,
-        "fov": 10.21,
+        "azimuth": 309,
+        "fov": 10,
         "elev_m": 222.0,
         "ground_m": 183.0
       }
@@ -74,8 +78,8 @@
       "geo": {
         "lat": 38.6428,
         "lon": -90.2648,
-        "azimuth": 233.0,
-        "fov": 266.0,
+        "azimuth": 233,
+        "fov": 266,
         "elev_m": 263.0,
         "ground_m": 151.0,
         "ptz": true
@@ -117,8 +121,8 @@
       "geo": {
         "lat": 38.811597,
         "lon": -89.955851,
-        "azimuth": 290.0,
-        "fov": 90.0,
+        "azimuth": 290,
+        "fov": 90,
         "elev_m": 174.0,
         "ground_m": 165.0
       }
@@ -134,8 +138,8 @@
       "geo": {
         "lat": 38.4442,
         "lon": -90.3777,
-        "azimuth": 202.0,
-        "fov": 20.0,
+        "azimuth": 202,
+        "fov": 20,
         "elev_m": 182.0,
         "ground_m": 159.0
       }
@@ -160,8 +164,8 @@
       "geo": {
         "lat": 38.613974,
         "lon": -90.25732,
-        "azimuth": 276.2,
-        "fov": 28.0
+        "azimuth": 276,
+        "fov": 28
       }
     },
     {
@@ -184,8 +188,8 @@
       "geo": {
         "lat": 38.6511,
         "lon": -90.1365,
-        "azimuth": 244.55,
-        "fov": 14.08,
+        "azimuth": 245,
+        "fov": 14,
         "elev_m": 158.0,
         "ground_m": 129.0
       }
@@ -210,8 +214,8 @@
       "geo": {
         "lat": 38.6245,
         "lon": -90.1845,
-        "azimuth": 113.58,
-        "fov": 111.82,
+        "azimuth": 114,
+        "fov": 112,
         "elev_m": 326.0,
         "ground_m": 136.0
       }
@@ -227,8 +231,8 @@
       "geo": {
         "lat": 38.6247,
         "lon": -90.1852,
-        "azimuth": 287.73,
-        "fov": 107.67,
+        "azimuth": 288,
+        "fov": 108,
         "elev_m": 326.0,
         "ground_m": 136.0
       }
@@ -271,8 +275,8 @@
       "geo": {
         "lat": 38.622414,
         "lon": -90.175545,
-        "azimuth": 285.32,
-        "fov": 39.13,
+        "azimuth": 285,
+        "fov": 39,
         "elev_m": 138.0,
         "ground_m": 126.0
       }
@@ -315,8 +319,8 @@
       "geo": {
         "lat": 38.635143,
         "lon": -90.263975,
-        "azimuth": 104.87,
-        "fov": 32.98,
+        "azimuth": 105,
+        "fov": 33,
         "elev_m": 225.0,
         "ground_m": 155.0
       }

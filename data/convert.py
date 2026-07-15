@@ -26,8 +26,26 @@ Geo / map (data/locations.csv, optional):
     otherwise a plain pin. See parse_geo for the left/right -> azimuth/fov
     math and the elev_m/ground_m (viewshed) fields.
 """
-import csv, json, os, sys
+import csv, json, os, subprocess, sys
 from datetime import datetime, timezone
+
+
+def git_version(here):
+    """Best-effort {branch, commit} of the repo at data-generation time.
+
+    Note: this reflects HEAD when convert.py runs (i.e. one commit behind the
+    commit that includes the regenerated JSON). Good enough as a "which build"
+    footer; a deploy-time stamp would need CI.
+    """
+    def g(*args):
+        return subprocess.check_output(
+            ["git", "-C", here, *args], text=True,
+            stderr=subprocess.DEVNULL).strip()
+    try:
+        return {"branch": g("rev-parse", "--abbrev-ref", "HEAD"),
+                "commit": g("rev-parse", "--short", "HEAD")}
+    except Exception:
+        return None
 
 VIEWS = [
     {"key": "streams", "title": "Streams"},
@@ -106,8 +124,8 @@ def parse_geo(r):
         fov = (right - left) % 360 or 360.0   # 0 width -> treat as full circle
         az = (left + fov / 2) % 360
     if az is not None and fov is not None:
-        geo["azimuth"] = round(az, 2)
-        geo["fov"] = round(fov, 2)
+        geo["azimuth"] = round(az)   # whole-degree headings (extents are
+        geo["fov"] = round(fov)      # only approximate anyway)
 
     elev, ground = _num(r.get("elev_m")), _num(r.get("ground_m"))
     if elev is not None:
@@ -189,6 +207,7 @@ def main():
 
     data = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "version": git_version(here),
         "views": VIEWS,
         "cameras": cameras,
     }
