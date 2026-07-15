@@ -13,6 +13,7 @@ const FOV_RADIUS_M = 1600;    // illustrative length of the FOV wedge (these are
                               // elevated, long-range cams); visible at metro zoom
 const MAP_KEY = 'map';
 const CAMERAS_KEY = 'cameras';
+const PROBE_INTERVAL_MS = 120000; // re-check liveness every 2 min (#17)
 
 const state = {
   data: null,
@@ -21,6 +22,7 @@ const state = {
   modalSink: null,  // media resources for the open lightbox
   map: null,        // Leaflet instance for the Map view
   filters: { type: 'all', status: 'all' }, // Cameras-view filters (#4)
+  live: {},         // name -> {online: bool, at: ms} from probes (#17)
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -55,6 +57,10 @@ async function boot() {
   selectView(CAMERAS_KEY);
   updateMeta();
   startClock();
+  probeAll(); // fire-and-forget; dots/uptime fill in as results land (#17)
+  setInterval(() => {
+    if (document.visibilityState === 'visible') probeAll();
+  }, PROBE_INTERVAL_MS);
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
   });
@@ -118,7 +124,58 @@ function camType(cam) {
   return 'stream'; // hls / iframe (a live stream, online or offline)
 }
 
-const camOnline = (cam) => cam.status !== 'offline' && cam.status !== 'dead';
+// Static status from the CSV — the fallback when we can't probe.
+const staticOnline = (cam) => cam.status !== 'offline' && cam.status !== 'dead';
+
+// Live probe result wins when we have one; otherwise fall back to the CSV. (#17)
+function camOnline(cam) {
+  const live = state.live[cam.name];
+  return live ? live.online : staticOnline(cam);
+}
+
+/* ---------- liveness probing (#17) ----------
+   wetmet's stream server answers an unsigned playlist request with 403 when
+   the stream exists (it just wants its wmsAuthSign token) and 404 when the
+   camera is down — and sends Access-Control-Allow-Origin:* on both, so a HEAD
+   from the browser can read the status. No token, no backend, no CI.
+   Cameras without a probe_url (Dacast/Nest/stills) keep their static status. */
+
+async function probeCamera(cam) {
+  try {
+    const res = await fetch(cam.probe_url, { method: 'HEAD', cache: 'no-store' });
+    state.live[cam.name] = { online: res.status !== 404, at: Date.now() };
+  } catch {
+    // Network/CORS failure tells us nothing about the camera — leave the last
+    // known result (or the static status) rather than crying offline.
+  }
+}
+
+async function probeAll() {
+  const cams = state.data.cameras.filter((c) => c.probe_url);
+  if (!cams.length) return;
+  await Promise.all(cams.map(probeCamera));
+  refreshLiveUi();
+}
+
+// Update dots/uptime in place. Deliberately NOT a re-render: rebuilding the
+// grid would tear down and reload every iframe.
+function refreshLiveUi() {
+  for (const el of document.querySelectorAll('[data-cam]')) {
+    const cam = state.data.cameras.find((c) => c.name === el.dataset.cam);
+    if (!cam) continue;
+    if (el.classList.contains('status-dot')) applyDot(el, cam);
+    if (el.classList.contains('card-uptime')) el.__render && el.__render();
+  }
+}
+
+function applyDot(dot, cam) {
+  const online = camOnline(cam);
+  dot.className = `status-dot ${online ? 'is-online' : 'is-offline'}`;
+  const live = state.live[cam.name];
+  dot.title = live
+    ? `${online ? 'Online' : 'Offline'} — checked ${new Date(live.at).toLocaleTimeString()}`
+    : `${online ? 'Online' : 'Offline'} — from camera data (not live-checked)`;
+}
 
 function matchesFilters(cam) {
   const f = state.filters;
@@ -264,8 +321,14 @@ function buildBody(cam, sink) {
   tag.className = `type-tag type-${type}`;
   tag.textContent = TYPE_LABEL[type];
   caption.appendChild(tag);
+  // Live status dot (#17) — green pulsing when up, amber when down.
+  const dot = document.createElement('span');
+  dot.dataset.cam = cam.name;
+  applyDot(dot, cam);
+  caption.appendChild(dot);
   const timer = document.createElement('span');
   timer.className = 'card-uptime';
+  timer.dataset.cam = cam.name;
   caption.appendChild(timer);
   startUptime(timer, cam, sink);
   body.appendChild(caption);
@@ -298,27 +361,35 @@ function fmtDuration(ms) {
 }
 
 function startUptime(el, cam, sink) {
-  const online = camOnline(cam);
-  const store = loadSeen();
-  const rec = store[cam.name] || {};
-  if (online) {
-    if (!rec.firstOnline) rec.firstOnline = Date.now();
-    rec.lastOnline = Date.now();
-  }
-  store[cam.name] = rec;
-  saveSeen(store);
-
   const render = () => {
+    // Probeable but not yet probed: say nothing rather than guess from the
+    // static status and write a bogus "last seen online" into the store.
+    if (cam.probe_url && !state.live[cam.name]) {
+      el.className = 'card-uptime';
+      el.textContent = 'checking…';
+      return;
+    }
+    const online = camOnline(cam);
+    const store = loadSeen();
+    const rec = store[cam.name] || {};
     if (online) {
+      if (!rec.firstOnline) rec.firstOnline = Date.now();
+      rec.lastOnline = Date.now();
       el.className = 'card-uptime up';
       el.textContent = `up ${fmtDuration(Date.now() - rec.firstOnline)}`;
     } else {
+      // Went down: drop firstOnline so uptime restarts when it returns, and
+      // freeze lastOnline so downtime counts from when we last saw it up.
+      delete rec.firstOnline;
       el.className = 'card-uptime down';
       el.textContent = rec.lastOnline
         ? `offline ${fmtDuration(Date.now() - rec.lastOnline)}`
         : 'offline · forever';
     }
+    store[cam.name] = rec;
+    saveSeen(store);
   };
+  el.__render = render;
   render();
   sink.timers.push(setInterval(render, 30000));
 }
@@ -493,7 +564,7 @@ function renderMap() {
 
 // Pin/status bucket used for colour + the tooltip's type label. (#7)
 function pinStatus(cam) {
-  if (cam.status === 'offline' || cam.status === 'dead') return 'offline';
+  if (!camOnline(cam)) return 'offline'; // live probe result when we have one
   if (cam.render === 'image') return 'still';
   return 'stream'; // hls / iframe / link-out, live
 }
@@ -506,7 +577,7 @@ const COMPASS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
 const cardinal = (deg) => COMPASS[Math.round(((deg % 360) + 360) % 360 / 22.5) % 16];
 
 function typeLabel(cam) {
-  if (cam.status === 'offline' || cam.status === 'dead') return 'Offline';
+  if (!camOnline(cam)) return 'Offline';
   if (cam.render === 'image') return 'Still image';
   if (cam.render === 'link') return 'Link-out';
   if (cam.status === 'event_only') return 'Event only';
